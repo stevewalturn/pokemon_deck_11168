@@ -1,7 +1,7 @@
 {
   "package_name": "com.yeah_well.pokemon_deck",
-  "project_description": "A Pok\u00e9mon Deck management Flutter application that enables users to browse, collect, and manage a personalized Pok\u00e9mon collection. The app supports creating a deck of up to 20 unique Pok\u00e9mon, with features to view detailed Pok\u00e9mon information, add/remove Pok\u00e9mon from the deck, and navigate through different screens using a clean, modular architecture.",
-  "architecture_overview": "The application leverages the Stacked architecture with Model-View-ViewModel (MVVM) pattern, utilizing dependency injection and service locators. Key components include a PokemonService for managing Pok\u00e9mon data, dedicated ViewModels for each screen, and a robust routing mechanism. The app is designed with separation of concerns, allowing easy extension and maintenance.",
+  "project_description": "A comprehensive Pok\u00e9mon Deck management application that enables users to create and manage a personalized Pok\u00e9mon collection. Users can browse through a dynamic pool of 20 randomly generated Pok\u00e9mon, view detailed Pok\u00e9mon information, add/remove Pok\u00e9mon from their deck, and engage in strategic battles. The application supports deck building with up to 20 unique Pok\u00e9mon and provides an interactive battle arena for comparing Pok\u00e9mon stats and selecting battle participants.",
+  "architecture_overview": "The application utilizes the Stacked architecture with Model-View-ViewModel (MVVM) pattern, leveraging dependency injection and service locators. Key architectural components include a centralized PokemonService for managing Pok\u00e9mon data, dedicated ViewModels for each screen, and a robust routing mechanism. The design emphasizes separation of concerns, allowing for modular extension and maintainability through service-based state management and reactive UI updates.",
   "files": [
     {
       "name": "lib/app/app.dart",
@@ -1176,6 +1176,141 @@
         "pokemon_deck/ui/views/pokemon_detail/pokemon_detail_viewmodel.dart",
         "stacked/stacked.dart"
       ]
+    },
+    {
+      "name": "lib/ui/widgets/battle_arena.dart",
+      "description": "A UI component that manages and displays Pok\u00e9mon battle interface, allowing users to select and view Pok\u00e9mon from player and opponent decks during a battle scenario",
+      "class_diagram": "@startuml\nclass BattleArena {\n  -List<Pokemon> playerDeck\n  -List<Pokemon> opponentDeck\n  -Pokemon selectedPlayerPokemon\n  -Pokemon selectedOpponentPokemon\n  +build(BuildContext context)\n}\n@enduml",
+      "methods": [
+        {
+          "name": "build",
+          "description": "Constructs the visual battle arena layout with Pok\u00e9mon deck selection and battle stats display",
+          "parameters": [
+            "BuildContext context"
+          ],
+          "return_type": "Widget"
+        }
+      ],
+      "dependencies": [
+        "package:flutter/material.dart",
+        "package:pokemon_deck/models/pokemon.dart",
+        "package:pokemon_deck/ui/widgets/battle_pokemon_card.dart",
+        "package:pokemon_deck/ui/widgets/battle_stats_display.dart"
+      ]
+    },
+    {
+      "name": "lib/ui/views/battle/battle_viewmodel.dart",
+      "description": "A ViewModel for managing Pok\u00e9mon battle state and interactions, responsible for selecting and managing player and opponent Pok\u00e9mon during a battle scenario",
+      "class_diagram": "@startuml\nclass BattleViewModel {\n  -_pokemonService: PokemonService\n  -_selectedPlayerPokemon: Pokemon\n  -_selectedOpponentPokemon: Pokemon\n  +playerDeck: List<Pokemon>\n  +opponentDeck: List<Pokemon>\n  +selectPlayerPokemon(pokemon: Pokemon)\n  +selectOpponentPokemon(pokemon: Pokemon)\n  +resetBattle()\n}\n@enduml",
+      "methods": [
+        {
+          "name": "selectPlayerPokemon",
+          "description": "Selects a player's Pok\u00e9mon for battle, preventing selection of fainted Pok\u00e9mon",
+          "parameters": [
+            "pokemon"
+          ],
+          "return_type": null
+        },
+        {
+          "name": "selectOpponentPokemon",
+          "description": "Selects an opponent's Pok\u00e9mon for battle, preventing selection of fainted Pok\u00e9mon",
+          "parameters": [
+            "pokemon"
+          ],
+          "return_type": null
+        },
+        {
+          "name": "resetBattle",
+          "description": "Resets the battle state by clearing selected Pok\u00e9mon",
+          "parameters": null,
+          "return_type": null
+        }
+      ],
+      "dependencies": [
+        "pokemon_service.dart",
+        "pokemon.dart",
+        "stacked/stacked.dart"
+      ]
+    },
+    {
+      "name": "lib/ui/views/battle/battle_view.dart",
+      "description": "A Flutter view for managing a Pok\u00e9mon battle interface, rendering the battle arena and handling user interactions for Pok\u00e9mon selection and battle management",
+      "class_diagram": "@startuml\nclass BattleView {\n  +builder(BuildContext, BattleViewModel)\n  +viewModelBuilder(BuildContext)\n}\nnote right: Manages Battle Arena UI\n@enduml",
+      "methods": [
+        {
+          "name": "builder",
+          "description": "Constructs the battle view's UI, displaying the battle arena and handling error states",
+          "parameters": [
+            "BuildContext",
+            "BattleViewModel",
+            "Widget?"
+          ],
+          "return_type": "Widget"
+        },
+        {
+          "name": "viewModelBuilder",
+          "description": "Creates and initializes the BattleViewModel for managing battle state",
+          "parameters": [
+            "BuildContext"
+          ],
+          "return_type": "BattleViewModel"
+        }
+      ],
+      "dependencies": [
+        "flutter/material.dart",
+        "stacked/stacked.dart",
+        "pokemon_deck/ui/views/battle/battle_viewmodel.dart",
+        "pokemon_deck/ui/widgets/battle_arena.dart"
+      ]
+    },
+    {
+      "name": "lib/ui/widgets/battle_pokemon_card.dart",
+      "description": "A reusable UI widget for displaying a Pok\u00e9mon's battle state, designed to show detailed information about a Pok\u00e9mon during a battle, including health, image, name, and selection status",
+      "class_diagram": "@startuml\nclass BattlePokemonCard {\n  +Pokemon pokemon\n  +bool isSelected\n  +VoidCallback onTap\n  +bool isOpponent\n  +Widget build(BuildContext context)\n}\n@enduml",
+      "methods": [
+        {
+          "name": "build",
+          "description": "Constructs the visual representation of a Pok\u00e9mon card during battle, handling different states like selection, health, and dead status",
+          "parameters": [
+            "BuildContext context"
+          ],
+          "return_type": "Widget"
+        }
+      ],
+      "dependencies": [
+        "package:flutter/material.dart",
+        "package:pokemon_deck/models/pokemon.dart",
+        "package:pokemon_deck/ui/common/app_colors.dart"
+      ]
+    },
+    {
+      "name": "lib/ui/widgets/battle_stats_display.dart",
+      "description": "A Flutter widget that displays comparative battle statistics between a player's Pok\u00e9mon and an opponent's Pok\u00e9mon, providing a visual representation of key battle metrics like HP and type during gameplay",
+      "class_diagram": "@startuml\nclass BattleStatsDisplay {\n  - playerPokemon: Pokemon\n  - opponentPokemon: Pokemon\n  + build(context: BuildContext): Widget\n  - _buildPokemonStats(pokemon: Pokemon, isPlayer: bool): Widget\n}\n@enduml",
+      "methods": [
+        {
+          "name": "build",
+          "description": "Constructs the visual layout for comparing Pok\u00e9mon battle stats",
+          "parameters": [
+            "context"
+          ],
+          "return_type": "Widget"
+        },
+        {
+          "name": "_buildPokemonStats",
+          "description": "Renders individual Pok\u00e9mon statistics with type-based color styling",
+          "parameters": [
+            "pokemon",
+            "isPlayer"
+          ],
+          "return_type": "Widget"
+        }
+      ],
+      "dependencies": [
+        "package:flutter/material.dart",
+        "package:pokemon_deck/models/pokemon.dart",
+        "package:pokemon_deck/ui/common/app_colors.dart"
+      ]
     }
   ],
   "dependencies": [
@@ -1200,7 +1335,7 @@
       "purpose": "Creating gaps in layouts"
     }
   ],
-  "sequence_diagram": "@startuml\nactor User\nparticipant PokemonService\nparticipant DeckView\nparticipant PokemonDetailView\nparticipant AddToDeckDialog\n\nUser -> DeckView: View Deck\nDeckView -> PokemonService: Retrieve Deck\nPokemonService --> DeckView: Return Pok\u00e9mon List\nUser -> DeckView: Select Pok\u00e9mon\nDeckView -> PokemonDetailView: Navigate\nPokemonDetailView -> PokemonService: Get Pok\u00e9mon Details\nUser -> PokemonDetailView: Add to Deck\nPokemonDetailView -> AddToDeckDialog: Confirm Add\nAddToDeckDialog -> PokemonService: Add Pok\u00e9mon\nPokemonService --> DeckView: Update Deck\n@enduml",
-  "state_management_flow": "State management is implemented using the Stacked framework's BaseViewModel. Each view (DeckView, PokemonDetailView) has a corresponding ViewModel that manages its state. The PokemonService acts as a centralized state container, tracking the global Pok\u00e9mon collection and deck state. ViewModels interact with the service to perform state mutations, with reactive rebuilding triggered by service method calls.",
-  "navigation_flow": "Navigation is managed through Stacked's routing system, defined in app.router.dart. The primary navigation flow starts with a StartupView, which initializes the app and transitions to the main DeckView. Users can navigate to PokemonDetailView by selecting a Pok\u00e9mon, with the ability to add Pok\u00e9mon to their deck via a modal dialog. The NavigationService handles all screen transitions, ensuring a clean and decoupled navigation experience."
+  "sequence_diagram": "@startuml\nactor User\nparticipant StartupView\nparticipant HomeView\nparticipant DeckView\nparticipant PokemonService\nparticipant PokemonDetailView\nparticipant BattleView\n\nUser -> StartupView: Launch App\nStartupView -> PokemonService: Initialize Pok\u00e9mon\nPokemonService --> StartupView: Pok\u00e9mon Collection Ready\nStartupView -> HomeView: Navigate\nUser -> HomeView: Browse Options\nUser -> DeckView: View Deck\nDeckView -> PokemonService: Retrieve Deck\nPokemonService --> DeckView: Return Deck Pok\u00e9mon\nUser -> DeckView: Select Pok\u00e9mon\nDeckView -> PokemonDetailView: Navigate\nPokemonDetailView -> PokemonService: Get Pok\u00e9mon Details\nUser -> PokemonDetailView: Add/Remove Pok\u00e9mon\nPokemonDetailView -> PokemonService: Update Deck\nUser -> HomeView: Start Battle\nHomeView -> BattleView: Navigate\nBattleView -> PokemonService: Load Player/Opponent Decks\n@enduml",
+  "state_management_flow": "State management is primarily implemented using the Stacked framework's BaseViewModel and reactive programming approach. The PokemonService acts as a centralized state container, managing the global Pok\u00e9mon collection, deck state, and battle-related data. Each ViewModel (DeckViewModel, PokemonDetailViewModel, BattleViewModel) interacts with the PokemonService, triggering reactive UI updates through method calls that modify the underlying data. ViewModels encapsulate business logic, handle user interactions, and communicate with services to mutate and retrieve state.",
+  "navigation_flow": "Navigation is managed through Stacked's comprehensive routing system, defined in app.router.dart. The application follows a structured navigation flow starting with the StartupView, which initializes the app and transitions to the HomeView. Users can navigate between DeckView, PokemonDetailView, and BattleView using the NavigationService. Each view is associated with a specific ViewModel, enabling seamless screen transitions and maintaining a clean, decoupled navigation experience with type-safe routing and dynamic parameter passing."
 }
