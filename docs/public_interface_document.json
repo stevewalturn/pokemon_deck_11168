@@ -1,7 +1,7 @@
 {
   "package_name": "com.yeah_well.pokemon_deck",
-  "project_description": "A Pok\u00e9mon management mobile application that enables users to explore, collect, and battle with a dynamically generated pool of 20 unique Pok\u00e9mon. Users can browse a collection of randomly generated Pok\u00e9mon, view detailed statistics, build a personalized deck of up to 20 Pok\u00e9mon, organize their deck through sorting and filtering, and engage in strategic battles by comparing Pok\u00e9mon attributes. The app provides comprehensive interactions including adding/removing Pok\u00e9mon from the deck, navigating through different views, and comparing Pok\u00e9mon in a battle arena.",
-  "architecture_overview": "Implements a modular Stacked architecture with Model-View-ViewModel (MVVM) pattern, utilizing dependency injection and service locator. Core architectural components include a centralized PokemonService for managing Pok\u00e9mon data, dedicated ViewModels for each screen, type-safe routing via StackedRouter, and reactive state management through BaseViewModel. The design emphasizes separation of concerns, with services handling data management, ViewModels managing screen-specific logic, and Views rendering the UI.",
+  "project_description": "A comprehensive Pok\u00e9mon management mobile application that enables users to explore, collect, and battle with a dynamically generated pool of Pok\u00e9mon. Key features include generating 20 unique Pok\u00e9mon, browsing and exploring detailed Pok\u00e9mon statistics, building a personalized deck, organizing the deck through sorting and filtering mechanisms, and engaging in strategic battles by comparing Pok\u00e9mon attributes. Users can interact with Pok\u00e9mon by viewing details, adding/removing from the deck, and comparing their stats in a battle arena.",
+  "architecture_overview": "Implements a modular Stacked (MVVM) architecture with dependency injection and service locator pattern. Core architectural components include a centralized PokemonService for managing Pok\u00e9mon data, dedicated ViewModels for each screen, type-safe routing via StackedRouter, and reactive state management through BaseViewModel. The design emphasizes separation of concerns with services handling data management, ViewModels managing screen-specific logic, and Views rendering the UI.",
   "files": [
     {
       "name": "lib/app/app.dart",
@@ -1464,6 +1464,97 @@
         "package:pokemon_deck/models/pokemon.dart",
         "package:pokemon_deck/ui/common/app_colors.dart"
       ]
+    },
+    {
+      "name": "lib/ui/widgets/evolution_arrow.dart",
+      "description": "A reusable UI widget representing a visual evolution indicator with a level requirement, displaying a forward arrow and level text in a vertical layout",
+      "class_diagram": "@startuml\nclass EvolutionArrow {\n  +int requiredLevel\n  +Widget build(BuildContext context)\n}\n@enduml",
+      "methods": [
+        {
+          "name": "EvolutionArrow constructor",
+          "description": "Creates an evolution arrow widget with a specific required level",
+          "parameters": [
+            "requiredLevel"
+          ],
+          "return_type": null
+        },
+        {
+          "name": "build",
+          "description": "Renders the evolution arrow widget with an arrow icon and level text",
+          "parameters": [
+            "context"
+          ],
+          "return_type": "Widget"
+        }
+      ],
+      "dependencies": [
+        "package:flutter/material.dart"
+      ]
+    },
+    {
+      "name": "lib/ui/widgets/pokemon_evolution_chain.dart",
+      "description": "A widget that renders a visual representation of a Pokemon's evolution chain, displaying each Pokemon in the chain with their details and highlighting the current Pokemon",
+      "class_diagram": "@startuml\nclass PokemonEvolutionChain {\n  - List<Pokemon> evolutionChain\n  - Pokemon currentPokemon\n  + Widget build(BuildContext context)\n  - List<Widget> _buildEvolutionChain()\n}\n@enduml",
+      "methods": [
+        {
+          "name": "build",
+          "description": "Constructs the visual layout of the Pokemon evolution chain as a scrollable horizontal row",
+          "parameters": [
+            "BuildContext context"
+          ],
+          "return_type": "Widget"
+        },
+        {
+          "name": "_buildEvolutionChain",
+          "description": "Generates a list of Pokemon cards and evolution arrows representing the progression of Pokemon in the chain",
+          "parameters": null,
+          "return_type": "List<Widget>"
+        }
+      ],
+      "dependencies": [
+        "package:flutter/material.dart",
+        "package:pokemon_deck/models/pokemon.dart",
+        "package:pokemon_deck/ui/common/app_colors.dart",
+        "package:pokemon_deck/ui/widgets/evolution_arrow.dart"
+      ]
+    },
+    {
+      "name": "lib/models/pokemon_evolution.dart",
+      "description": "A model class representing the evolution details and lifecycle of a Pokemon in a Pokedex application, capturing each Pokemon's unique evolution properties and progression stages.",
+      "class_diagram": "@startuml\nclass PokemonEvolution {\n  +id: String\n  +name: String\n  +imageUrl: String\n  +evolutionStage: int\n  +evolvesFromId: String?\n  +evolvesToId: String?\n  +requiredLevel: int\n  +copyWith(): PokemonEvolution\n}\n@enduml",
+      "methods": [
+        {
+          "name": "constructor",
+          "description": "Creates a new Pokemon evolution instance with required details",
+          "parameters": [
+            "id",
+            "name",
+            "imageUrl",
+            "evolutionStage",
+            "requiredLevel",
+            "evolvesFromId?",
+            "evolvesToId?"
+          ],
+          "return_type": "PokemonEvolution"
+        },
+        {
+          "name": "copyWith",
+          "description": "Creates a new PokemonEvolution instance with selectively updated properties",
+          "parameters": [
+            "id?",
+            "name?",
+            "imageUrl?",
+            "evolutionStage?",
+            "evolvesFromId?",
+            "evolvesToId?",
+            "requiredLevel?"
+          ],
+          "return_type": "PokemonEvolution"
+        }
+      ],
+      "dependencies": [
+        "package:equatable/equatable.dart"
+      ]
     }
   ],
   "dependencies": [
@@ -1488,7 +1579,7 @@
       "purpose": "Creating gaps in layouts"
     }
   ],
-  "sequence_diagram": "@startuml\nactor User\nparticipant StartupView\nparticipant HomeView\nparticipant DeckView\nparticipant PokemonDetailView\nparticipant BattleView\nparticipant PokemonService\n\nUser -> StartupView: Launch App\nStartupView -> PokemonService: Initialize Pok\u00e9mon Collection\nPokemonService --> StartupView: Pok\u00e9mon Ready\nStartupView -> HomeView: Navigate\nUser -> HomeView: Browse Options\nUser -> DeckView: View Deck\nDeckView -> PokemonService: Retrieve Deck Data\nUser -> DeckView: Select Pok\u00e9mon\nDeckView -> PokemonDetailView: Navigate\nPokemonDetailView -> PokemonService: Get Pok\u00e9mon Details\nUser -> PokemonDetailView: Add/Remove from Deck\nPokemonDetailView -> PokemonService: Update Deck\nUser -> HomeView: Start Battle\nHomeView -> BattleView: Navigate\nBattleView -> PokemonService: Load Battle Decks\n@enduml",
-  "state_management_flow": "State management is implemented using the Stacked framework's BaseViewModel and reactive programming principles. The PokemonService acts as the centralized state container, managing the global Pok\u00e9mon collection, deck state, and battle-related data. Each ViewModel (DeckViewModel, PokemonDetailViewModel, BattleViewModel) interacts with the PokemonService, triggering reactive UI updates through method calls that modify the underlying data. The reactive approach ensures that UI components automatically update when the underlying data changes, providing a seamless and responsive user experience.",
-  "navigation_flow": "Navigation is managed through Stacked's comprehensive routing system defined in app.router.dart. The application follows a structured navigation flow starting with the StartupView for initialization, transitioning to the HomeView as the main entry point. Users can navigate between DeckView, PokemonDetailView, and BattleView using the NavigationService. Each view is associated with a specific ViewModel, enabling type-safe routing with dynamic parameter passing and maintaining a clean, decoupled navigation experience. The routing system supports push, replace, and pop navigation methods, ensuring flexible and intuitive screen transitions."
+  "sequence_diagram": "@startuml\nactor User\nparticipant StartupView\nparticipant HomeView\nparticipant DeckView\nparticipant PokemonDetailView\nparticipant BattleView\nparticipant PokemonService\n\nUser -> StartupView: Launch App\nStartupView -> PokemonService: Initialize Pok\u00e9mon Collection\nPokemonService --> StartupView: Pok\u00e9mon Ready\nStartupView -> HomeView: Navigate\nUser -> DeckView: View/Manage Deck\nDeckView -> PokemonService: Retrieve Deck\nUser -> PokemonDetailView: View Pok\u00e9mon Details\nPokemonDetailView -> PokemonService: Get Pok\u00e9mon Info\nUser -> DeckView: Add/Remove Pok\u00e9mon\nUser -> BattleView: Start Battle\nBattleView -> PokemonService: Load Battle Decks\n@enduml",
+  "state_management_flow": "Reactive state management using Stacked framework with BaseViewModel. PokemonService acts as the centralized state container, managing Pok\u00e9mon collections, deck state, and battle data. ViewModels (DeckViewModel, PokemonDetailViewModel, BattleViewModel) interact with PokemonService, triggering reactive UI updates through method calls. State changes automatically propagate to UI components, ensuring real-time responsiveness and maintaining a unidirectional data flow.",
+  "navigation_flow": "Navigation implemented via Stacked's comprehensive routing system in app.router.dart. Supports type-safe routing with dynamic parameter passing between views. Key navigation paths include StartupView \u2192 HomeView, HomeView \u2192 DeckView, HomeView \u2192 BattleView, and DeckView \u2192 PokemonDetailView. Uses NavigationService for push, replace, and pop navigation methods, ensuring a flexible and decoupled navigation experience with clear separation between navigation logic and view implementations."
 }
