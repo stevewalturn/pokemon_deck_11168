@@ -2,8 +2,9 @@ import 'dart:math';
 import 'package:pokemon_deck/models/pokemon.dart';
 import 'package:pokemon_deck/utils/const/pokemon_constants.dart';
 import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
 
-class PokemonService implements InitializableDependency {
+class PokemonService {
   final List<Pokemon> _pokemons = [];
   final List<Pokemon> _deck = [];
   List<Pokemon> _opponentDeck = [];
@@ -19,7 +20,6 @@ class PokemonService implements InitializableDependency {
 
   bool get isDeckFull => _deck.length >= PokemonConstants.maxDeckSize;
 
-  @override
   Future<void> init() async {
     await initializePokemon();
   }
