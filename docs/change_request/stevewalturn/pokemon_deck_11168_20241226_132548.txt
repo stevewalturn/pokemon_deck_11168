@@ -1,0 +1,1 @@
+Now I can not see the battle view please update the app so it has navigation to the BattleView

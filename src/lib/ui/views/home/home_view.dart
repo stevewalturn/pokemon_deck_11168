@@ -17,6 +17,10 @@ class HomeView extends StackedView<HomeViewModel> {
         title: const Text('Pokemon Collection'),
         actions: [
           IconButton(
+            icon: const Icon(Icons.sports_mma),
+            onPressed: viewModel.navigateToBattle,
+          ),
+          IconButton(
             icon: const Icon(Icons.view_agenda),
             onPressed: viewModel.navigateToDeck,
           ),
