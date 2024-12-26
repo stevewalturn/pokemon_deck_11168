@@ -1,0 +1,1 @@
+yes please do step 1, (1) Create a basic battle interface with two Pokemon decks facing each other,
