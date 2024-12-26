@@ -48,7 +48,6 @@ class Pokemon extends Equatable {
   }
 
   double get healthPercentage => currentHp / hp;
-
   bool get isDead => currentHp <= 0;
 
   @override
