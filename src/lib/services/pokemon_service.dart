@@ -6,14 +6,18 @@ import 'package:stacked/stacked.dart';
 class PokemonService {
   final List<Pokemon> _pokemons = [];
   final List<Pokemon> _deck = [];
+  final List<Pokemon> _opponentDeck = [];
   final _random = Random();
 
   List<Pokemon> get pokemons => _pokemons;
-  List<Pokemon> get deck => _deck;
+  List<Pokemon> get deck => _deck
+      .map((p) => p.copyWith(
+            currentHp: p.hp,
+          ))
+      .toList();
 
   bool get isDeckFull => _deck.length >= PokemonConstants.maxDeckSize;
 
-  // Initialize with some mock data
   Future<void> initializePokemon() async {
     if (_pokemons.isEmpty) {
       for (int i = 1; i <= 20; i++) {
@@ -24,6 +28,7 @@ class PokemonService {
             imageUrl:
                 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$i.png',
             hp: _random.nextInt(100) + 50,
+            currentHp: _random.nextInt(100) + 50,
             type: PokemonConstants
                 .types[_random.nextInt(PokemonConstants.types.length)],
             moves: List.generate(
@@ -35,6 +40,28 @@ class PokemonService {
         );
       }
     }
+  }
+
+  List<Pokemon> generateOpponentDeck() {
+    if (_opponentDeck.isEmpty) {
+      final availablePokemon = _pokemons
+          .where((p) => !_deck.any((deckPokemon) => deckPokemon.id == p.id))
+          .toList();
+
+      final deckSize =
+          min(PokemonConstants.maxDeckSize, availablePokemon.length);
+
+      for (var i = 0; i < deckSize; i++) {
+        final randomIndex = _random.nextInt(availablePokemon.length);
+        final selectedPokemon = availablePokemon[randomIndex];
+        _opponentDeck.add(selectedPokemon.copyWith(
+          currentHp: selectedPokemon.hp,
+        ));
+        availablePokemon.removeAt(randomIndex);
+      }
+    }
+
+    return _opponentDeck;
   }
 
   Pokemon? getPokemon(String id) {
@@ -76,5 +103,9 @@ class PokemonService {
 
   void clearDeck() {
     _deck.clear();
+  }
+
+  void resetBattle() {
+    _opponentDeck.clear();
   }
 }

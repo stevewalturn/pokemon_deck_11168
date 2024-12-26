@@ -2,6 +2,7 @@ import 'package:pokemon_deck/services/pokemon_service.dart';
 import 'package:pokemon_deck/ui/bottom_sheets/notice/notice_sheet.dart';
 import 'package:pokemon_deck/ui/dialogs/add_to_deck/add_to_deck_dialog.dart';
 import 'package:pokemon_deck/ui/dialogs/info_alert/info_alert_dialog.dart';
+import 'package:pokemon_deck/ui/views/battle/battle_view.dart';
 import 'package:pokemon_deck/ui/views/deck/deck_view.dart';
 import 'package:pokemon_deck/ui/views/home/home_view.dart';
 import 'package:pokemon_deck/ui/views/pokemon_detail/pokemon_detail_view.dart';
@@ -15,6 +16,7 @@ import 'package:stacked_services/stacked_services.dart';
     MaterialRoute(page: HomeView),
     MaterialRoute(page: DeckView),
     MaterialRoute(page: PokemonDetailView),
+    MaterialRoute(page: BattleView),
   ],
   dependencies: [
     LazySingleton(classType: NavigationService),
