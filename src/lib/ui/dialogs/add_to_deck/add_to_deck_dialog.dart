@@ -21,7 +21,13 @@ class AddToDeckDialog extends StackedView<AddToDeckDialogModel> {
     AddToDeckDialogModel viewModel,
     Widget? child,
   ) {
-    final Pokemon pokemon = request.data;
+    // Add type checking and casting for the Pokemon data
+    if (request.data is! Pokemon) {
+      completer(DialogResponse(confirmed: false));
+      return const SizedBox.shrink();
+    }
+    
+    final Pokemon pokemon = request.data as Pokemon;
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
