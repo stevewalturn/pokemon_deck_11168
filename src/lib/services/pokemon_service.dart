@@ -27,6 +27,23 @@ class PokemonService {
   Future<void> initializePokemon() async {
     if (_pokemons.isEmpty) {
       for (int i = 1; i <= 20; i++) {
+        String? evolvesFromId;
+        String? evolvesToId;
+        int evolutionStage = 1;
+
+        // Find evolution chain for this Pokemon
+        for (var chain in PokemonConstants.evolutionChains.entries) {
+          final chainIndex = chain.value.indexOf(i.toString());
+          if (chainIndex != -1) {
+            evolutionStage = chainIndex + 1;
+            evolvesFromId = chainIndex > 0 ? chain.value[chainIndex - 1] : null;
+            evolvesToId = chainIndex < chain.value.length - 1
+                ? chain.value[chainIndex + 1]
+                : null;
+            break;
+          }
+        }
+
         _pokemons.add(
           Pokemon(
             id: i.toString(),
@@ -47,9 +64,34 @@ class PokemonService {
             speed: _random.nextInt(100) + 40,
             specialAttack: _random.nextInt(100) + 60,
             specialDefense: _random.nextInt(100) + 40,
+            evolvesFromId: evolvesFromId,
+            evolvesToId: evolvesToId,
+            evolutionStage: evolutionStage,
+            level: evolutionStage * 15 + _random.nextInt(10),
           ),
         );
       }
+    }
+  }
+
+  List<Pokemon> getEvolutionChain(String pokemonId) {
+    try {
+      String? chainKey;
+      for (var entry in PokemonConstants.evolutionChains.entries) {
+        if (entry.value.contains(pokemonId)) {
+          chainKey = entry.key;
+          break;
+        }
+      }
+
+      if (chainKey == null) {
+        return [getPokemon(pokemonId)!];
+      }
+
+      final chain = PokemonConstants.evolutionChains[chainKey]!;
+      return chain.map((id) => getPokemon(id)).whereType<Pokemon>().toList();
+    } catch (e) {
+      throw Exception('Failed to load evolution chain for this Pokémon.');
     }
   }
 

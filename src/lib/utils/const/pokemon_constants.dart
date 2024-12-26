@@ -56,4 +56,14 @@ class PokemonConstants {
     'Growl',
     'Roar',
   ];
+
+  static const Map<String, List<String>> evolutionChains = {
+    '1': ['1', '2', '3'], // Bulbasaur -> Ivysaur -> Venusaur
+    '4': ['4', '5', '6'], // Charmander -> Charmeleon -> Charizard
+    '7': ['7', '8', '9'], // Squirtle -> Wartortle -> Blastoise
+    '10': ['10', '11', '12'], // Caterpie -> Metapod -> Butterfree
+    '13': ['13', '14', '15'], // Weedle -> Kakuna -> Beedrill
+    '16': ['16', '17', '18'], // Pidgey -> Pidgeotto -> Pidgeot
+    '19': ['19', '20'], // Rattata -> Raticate
+  };
 }

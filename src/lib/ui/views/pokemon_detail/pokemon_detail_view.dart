@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pokemon_deck/ui/common/app_colors.dart';
 import 'package:pokemon_deck/ui/views/pokemon_detail/pokemon_detail_viewmodel.dart';
+import 'package:pokemon_deck/ui/widgets/pokemon_evolution_chain.dart';
 import 'package:pokemon_deck/ui/widgets/pokemon_stats_display.dart';
 import 'package:stacked/stacked.dart';
 
@@ -71,6 +72,16 @@ class PokemonDetailView extends StackedView<PokemonDetailViewModel> {
                                   'Type: ${viewModel.pokemon!.type}',
                                   style: const TextStyle(fontSize: 18),
                                 ),
+                                Text(
+                                  'Level: ${viewModel.pokemon!.level}',
+                                  style: const TextStyle(fontSize: 18),
+                                ),
+                                const SizedBox(height: 16),
+                                if (viewModel.evolutionChain.isNotEmpty)
+                                  PokemonEvolutionChain(
+                                    evolutionChain: viewModel.evolutionChain,
+                                    currentPokemon: viewModel.pokemon!,
+                                  ),
                                 const SizedBox(height: 16),
                                 PokemonStatsDisplay(
                                     pokemon: viewModel.pokemon!),

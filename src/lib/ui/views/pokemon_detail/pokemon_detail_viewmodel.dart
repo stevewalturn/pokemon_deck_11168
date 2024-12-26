@@ -11,15 +11,30 @@ class PokemonDetailViewModel extends BaseViewModel {
   Pokemon? _pokemon;
   Pokemon? get pokemon => _pokemon;
 
+  List<Pokemon> _evolutionChain = [];
+  List<Pokemon> get evolutionChain => _evolutionChain;
+
   void initialize(String pokemonId) {
     try {
       _pokemon = _pokemonService.getPokemon(pokemonId);
       if (_pokemon == null) {
-        throw Exception('Pokemon not found!');
+        throw Exception('Pokémon not found!');
       }
+      _loadEvolutionChain();
       rebuildUi();
     } catch (e) {
       setError(e.toString());
+    }
+  }
+
+  void _loadEvolutionChain() {
+    try {
+      if (_pokemon != null) {
+        _evolutionChain = _pokemonService.getEvolutionChain(_pokemon!.id);
+        rebuildUi();
+      }
+    } catch (e) {
+      setError('Failed to load evolution chain. Please try again.');
     }
   }
 
