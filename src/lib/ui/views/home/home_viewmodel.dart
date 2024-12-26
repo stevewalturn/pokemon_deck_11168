@@ -1,35 +1,44 @@
-import 'package:pokemon_deck/app/app.bottomsheets.dart';
 import 'package:pokemon_deck/app/app.dialogs.dart';
 import 'package:pokemon_deck/app/app.locator.dart';
+import 'package:pokemon_deck/app/app.router.dart';
+import 'package:pokemon_deck/models/pokemon.dart';
+import 'package:pokemon_deck/services/pokemon_service.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 class HomeViewModel extends BaseViewModel {
+  final _navigationService = locator<NavigationService>();
   final _dialogService = locator<DialogService>();
-  final _bottomSheetService = locator<BottomSheetService>();
+  final _pokemonService = locator<PokemonService>();
 
-  String get counterLabel => 'Counter is: $_counter';
+  List<Pokemon> get pokemons => _pokemonService.pokemons;
+  bool get isDeckFull => _pokemonService.isDeckFull;
 
-  int _counter = 0;
-
-  void incrementCounter() {
-    _counter++;
-    rebuildUi();
+  void navigateToDeck() {
+    _navigationService.navigateToDeckView();
   }
 
-  void showDialog() {
-    _dialogService.showCustomDialog(
-      variant: DialogType.infoAlert,
-      title: 'Steve Rocks!',
-      description: 'Give steve $_counter stars on Github',
-    );
+  void navigateToPokemonDetail(String pokemonId) {
+    _navigationService.navigateToPokemonDetailView(pokemonId: pokemonId);
   }
 
-  void showBottomSheet() {
-    _bottomSheetService.showCustomSheet(
-      variant: BottomSheetType.notice,
-      title: 'title',
-      description: 'desc',
-    );
+  Future<void> addToDeck(Pokemon pokemon) async {
+    try {
+      if (isDeckFull) {
+        throw Exception('Your deck is full! Remove some Pokemon first.');
+      }
+
+      final dialogResponse = await _dialogService.showCustomDialog(
+        variant: DialogType.addToDeck,
+        data: pokemon,
+      );
+
+      if (dialogResponse?.confirmed ?? false) {
+        _pokemonService.addToDeck(pokemon.id);
+        rebuildUi();
+      }
+    } catch (e) {
+      setError(e.toString());
+    }
   }
 }

@@ -1,7 +1,7 @@
 {
   "package_name": "com.yeah_well.pokemon_deck",
-  "project_description": "The Flutter application follows the Stacked architecture, featuring routing, dependency injection, and dialog/bottom sheet management. It includes a startup screen, a home screen with a counter, a dialog, and a bottom sheet. The application also integrates with Firebase for analytics tracking and supports localization and multiple flavors (development and production).",
-  "architecture_overview": "The application is structured using the Stacked architecture, which separates the concerns of the UI, view models, and services. It uses Stacked for state management, routing, and dependency injection. The main components include the App, AppView, and various feature-specific views and view models. The application also utilizes services for managing dialogs, bottom sheets, and navigation, as well as observing screen transitions for analytics purposes.",
+  "project_description": "A Pok\u00e9mon Deck management Flutter application that enables users to browse, collect, and manage a personalized Pok\u00e9mon collection. The app supports creating a deck of up to 20 unique Pok\u00e9mon, with features to view detailed Pok\u00e9mon information, add/remove Pok\u00e9mon from the deck, and navigate through different screens using a clean, modular architecture.",
+  "architecture_overview": "The application leverages the Stacked architecture with Model-View-ViewModel (MVVM) pattern, utilizing dependency injection and service locators. Key components include a PokemonService for managing Pok\u00e9mon data, dedicated ViewModels for each screen, and a robust routing mechanism. The app is designed with separation of concerns, allowing easy extension and maintenance.",
   "files": [
     {
       "name": "lib/app/app.dart",
@@ -840,6 +840,342 @@
         "package:stacked/stacked.dart",
         "package:stacked_services/stacked_services.dart"
       ]
+    },
+    {
+      "name": "lib/ui/dialogs/add_to_deck/add_to_deck_dialog_model.dart",
+      "description": "A ViewModel for handling the state and logic of an 'Add to Deck' dialog in a Flutter application, using the Stacked architecture pattern for state management",
+      "class_diagram": "@startuml\nclass AddToDeckDialogModel extends BaseViewModel {\n}\n@enduml",
+      "methods": [
+        {
+          "name": "constructor",
+          "description": "Default constructor for creating an instance of the dialog model",
+          "parameters": null,
+          "return_type": null
+        }
+      ],
+      "dependencies": [
+        "stacked/stacked.dart"
+      ]
+    },
+    {
+      "name": "lib/ui/views/deck/deck_viewmodel.dart",
+      "description": "A ViewModel for managing a Pokemon deck, responsible for handling deck-related operations like adding, removing, and tracking Pokemon within a user's collection using the Stacked architectural pattern",
+      "class_diagram": "@startuml\nclass DeckViewModel {\n  - _pokemonService: PokemonService\n  + deck: List<Pokemon>\n  + isDeckEmpty: bool\n  + isDeckFull: bool\n  + removeFromDeck(pokemonId: String)\n  + clearDeck()\n}\n@enduml",
+      "methods": [
+        {
+          "name": "removeFromDeck",
+          "description": "Removes a specific Pokemon from the user's deck by its ID, updates UI state",
+          "parameters": [
+            "pokemonId"
+          ],
+          "return_type": null
+        },
+        {
+          "name": "clearDeck",
+          "description": "Completely removes all Pokemon from the user's deck, resetting the collection",
+          "parameters": null,
+          "return_type": null
+        }
+      ],
+      "dependencies": [
+        "pokemon_service.dart",
+        "pokemon.dart",
+        "stacked/stacked.dart"
+      ]
+    },
+    {
+      "name": "lib/ui/views/pokemon_detail/pokemon_detail_viewmodel.dart",
+      "description": "A view model responsible for managing the detailed view and interactions for a specific Pokemon in a Pokemon management application, handling Pokemon retrieval, deck addition, and navigation.",
+      "class_diagram": "@startuml\nclass PokemonDetailViewModel {\n  - _pokemonService: PokemonService\n  - _navigationService: NavigationService\n  - _pokemon: Pokemon\n  + initialize(pokemonId: String)\n  + addToDeck()\n  + goBack()\n}\n@enduml",
+      "methods": [
+        {
+          "name": "initialize",
+          "description": "Retrieves a Pokemon by its ID and prepares the view model's state, handling potential errors",
+          "parameters": [
+            "pokemonId"
+          ],
+          "return_type": null
+        },
+        {
+          "name": "addToDeck",
+          "description": "Adds the current Pokemon to the user's deck and navigates back to the previous screen",
+          "parameters": null,
+          "return_type": "Future<void>"
+        },
+        {
+          "name": "goBack",
+          "description": "Navigates back to the previous screen without additional actions",
+          "parameters": null,
+          "return_type": null
+        }
+      ],
+      "dependencies": [
+        "pokemon_service.dart",
+        "stacked",
+        "stacked_services",
+        "pokemon.dart"
+      ]
+    },
+    {
+      "name": "lib/ui/views/deck/deck_view.dart",
+      "description": "A Flutter view that displays a user's Pok\u00e9mon deck, allowing users to view and manage their collected Pok\u00e9mon in a grid layout with the ability to clear the entire deck",
+      "class_diagram": "@startuml\nclass DeckView {\n  +builder(context: BuildContext, viewModel: DeckViewModel)\n  +viewModelBuilder(context: BuildContext): DeckViewModel\n}\nclass DeckViewModel {\n  +deck: List<Pokemon>\n  +clearDeck()\n  +removeFromDeck(id: String)\n}\n@enduml",
+      "methods": [
+        {
+          "name": "builder",
+          "description": "Constructs the UI for the deck, handling different states like loading, error, empty deck, and populated deck",
+          "parameters": [
+            "context",
+            "viewModel",
+            "child"
+          ],
+          "return_type": "Widget"
+        },
+        {
+          "name": "viewModelBuilder",
+          "description": "Creates and provides the ViewModel for the deck view",
+          "parameters": [
+            "context"
+          ],
+          "return_type": "DeckViewModel"
+        }
+      ],
+      "dependencies": [
+        "package:flutter/material.dart",
+        "package:stacked/stacked.dart",
+        "deck_viewmodel.dart",
+        "deck_card.dart"
+      ]
+    },
+    {
+      "name": "lib/ui/widgets/deck_card.dart",
+      "description": "A UI widget for displaying individual Pok\u00e9mon card details with removal capability, enabling users to view and manage Pok\u00e9mon in their deck with a visually appealing and informative card interface",
+      "class_diagram": "@startuml\nclass DeckCard {\n  -Pokemon pokemon\n  -VoidCallback onRemove\n  +Widget build(BuildContext context)\n}\n@enduml",
+      "methods": [
+        {
+          "name": "build",
+          "description": "Constructs the visual representation of a Pok\u00e9mon card with details and a removal button",
+          "parameters": [
+            "BuildContext context"
+          ],
+          "return_type": "Widget"
+        }
+      ],
+      "dependencies": [
+        "flutter/material.dart",
+        "pokemon_deck/models/pokemon.dart",
+        "pokemon_deck/ui/common/app_colors.dart"
+      ]
+    },
+    {
+      "name": "lib/services/pokemon_service.dart",
+      "description": "A service responsible for managing Pokemon data and deck-building logic in a Pokemon collection/battling application, providing core functionality for creating, selecting, and managing Pokemon collections",
+      "class_diagram": "@startuml\nclass PokemonService {\n  -List<Pokemon> _pokemons\n  -List<Pokemon> _deck\n  +List<Pokemon> pokemons\n  +List<Pokemon> deck\n  +bool isDeckFull\n  +Future<void> initializePokemon()\n  +Pokemon? getPokemon(String id)\n  +bool addToDeck(String pokemonId)\n  +bool removeFromDeck(String pokemonId)\n  +void clearDeck()\n}\n@enduml",
+      "methods": [
+        {
+          "name": "initializePokemon",
+          "description": "Creates an initial collection of 20 randomly generated Pokemon with unique attributes",
+          "parameters": null,
+          "return_type": "Future<void>"
+        },
+        {
+          "name": "getPokemon",
+          "description": "Retrieves a specific Pokemon by its ID from the available Pokemon collection",
+          "parameters": [
+            "pokemonId"
+          ],
+          "return_type": "Pokemon?"
+        },
+        {
+          "name": "addToDeck",
+          "description": "Adds a Pokemon to the player's deck with validation for deck size and duplicate prevention",
+          "parameters": [
+            "pokemonId"
+          ],
+          "return_type": "bool"
+        },
+        {
+          "name": "removeFromDeck",
+          "description": "Removes a specific Pokemon from the player's deck",
+          "parameters": [
+            "pokemonId"
+          ],
+          "return_type": "bool"
+        },
+        {
+          "name": "clearDeck",
+          "description": "Completely clears all Pokemon from the player's current deck",
+          "parameters": null,
+          "return_type": "void"
+        }
+      ],
+      "dependencies": [
+        "dart:math",
+        "package:pokemon_deck/models/pokemon.dart",
+        "package:pokemon_deck/utils/const/pokemon_constants.dart",
+        "package:stacked/stacked.dart"
+      ]
+    },
+    {
+      "name": "lib/ui/widgets/pokemon_card.dart",
+      "description": "A reusable UI widget that renders a visually appealing card representing a Pokemon, displaying key details and supporting user interaction like adding to deck",
+      "class_diagram": "@startuml\nclass PokemonCard {\n  -Pokemon pokemon\n  -VoidCallback onTap\n  -bool showAddButton\n  +Widget build(BuildContext context)\n}\n@enduml",
+      "methods": [
+        {
+          "name": "build",
+          "description": "Constructs the visual representation of a Pokemon card with image, name, HP, type, and optional add/deck status icons",
+          "parameters": [
+            "BuildContext context"
+          ],
+          "return_type": "Widget"
+        }
+      ],
+      "dependencies": [
+        "flutter/material.dart",
+        "pokemon_deck/models/pokemon.dart",
+        "pokemon_deck/ui/common/app_colors.dart"
+      ]
+    },
+    {
+      "name": "lib/utils/const/pokemon_constants.dart",
+      "description": "A utility class that centralizes constant Pokemon-related data, providing a single source of truth for type information, type images, and common moves across the application.",
+      "class_diagram": "@startuml\nclass PokemonConstants {\n  {static} +maxDeckSize: int\n  {static} +types: List<String>\n  {static} +typeImages: Map<String, String>\n  {static} +commonMoves: List<String>\n}\n@enduml",
+      "methods": [
+        {
+          "name": "maxDeckSize",
+          "description": "Defines the maximum number of Pokemon that can be in a player's deck",
+          "parameters": null,
+          "return_type": "int"
+        },
+        {
+          "name": "types",
+          "description": "Provides a comprehensive list of all Pokemon types in the game",
+          "parameters": null,
+          "return_type": "List<String>"
+        },
+        {
+          "name": "typeImages",
+          "description": "Maps Pokemon types to their corresponding asset image paths",
+          "parameters": null,
+          "return_type": "Map<String, String>"
+        },
+        {
+          "name": "commonMoves",
+          "description": "Lists standard basic moves used by many Pokemon",
+          "parameters": null,
+          "return_type": "List<String>"
+        }
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "lib/models/pokemon.dart",
+      "description": "A data model representing a Pokemon character in a game or application, encapsulating key attributes like ID, name, image, health points, type, moves, and deck status. It provides immutable data representation with easy state transformation capabilities.",
+      "class_diagram": "@startuml\nclass Pokemon {\n  + id: String\n  + name: String\n  + imageUrl: String\n  + hp: int\n  + type: String\n  + moves: List<String>\n  + inDeck: bool\n  + copyWith(): Pokemon\n}\n@enduml",
+      "methods": [
+        {
+          "name": "constructor",
+          "description": "Creates a new Pokemon instance with required attributes",
+          "parameters": [
+            "id",
+            "name",
+            "imageUrl",
+            "hp",
+            "type",
+            "moves",
+            "inDeck"
+          ],
+          "return_type": "Pokemon"
+        },
+        {
+          "name": "copyWith",
+          "description": "Creates a new Pokemon instance with optionally updated attributes",
+          "parameters": [
+            "id",
+            "name",
+            "imageUrl",
+            "hp",
+            "type",
+            "moves",
+            "inDeck"
+          ],
+          "return_type": "Pokemon"
+        }
+      ],
+      "dependencies": [
+        "package:equatable/equatable.dart"
+      ]
+    },
+    {
+      "name": "lib/ui/dialogs/add_to_deck/add_to_deck_dialog.dart",
+      "description": "A Flutter dialog for adding a Pokemon to a user's deck, providing a confirmation interface with Pokemon details and interaction options",
+      "class_diagram": "@startuml\nclass AddToDeckDialog {\n  +request: DialogRequest\n  +completer: Function(DialogResponse)\n  +builder(context, viewModel, child): Widget\n  +viewModelBuilder(context): AddToDeckDialogModel\n}\n@enduml",
+      "methods": [
+        {
+          "name": "builder",
+          "description": "Constructs the visual dialog interface displaying Pokemon details and add/cancel actions",
+          "parameters": [
+            "BuildContext",
+            "AddToDeckDialogModel",
+            "Widget?"
+          ],
+          "return_type": "Widget"
+        },
+        {
+          "name": "viewModelBuilder",
+          "description": "Creates the associated view model for the dialog's state management",
+          "parameters": [
+            "BuildContext"
+          ],
+          "return_type": "AddToDeckDialogModel"
+        }
+      ],
+      "dependencies": [
+        "flutter/material.dart",
+        "pokemon_deck/models/pokemon.dart",
+        "pokemon_deck/ui/common/app_colors.dart",
+        "stacked/stacked.dart",
+        "stacked_services/stacked_services.dart"
+      ]
+    },
+    {
+      "name": "lib/ui/views/pokemon_detail/pokemon_detail_view.dart",
+      "description": "A detailed view screen for individual Pokemon, responsible for displaying comprehensive Pokemon information and allowing users to add Pokemon to their deck",
+      "class_diagram": "@startuml\nclass PokemonDetailView {\n  - pokemonId: String\n  + builder(context: BuildContext, viewModel: PokemonDetailViewModel)\n  + viewModelBuilder(context: BuildContext)\n  + onViewModelReady(viewModel: PokemonDetailViewModel)\n}\n@enduml",
+      "methods": [
+        {
+          "name": "builder",
+          "description": "Constructs the UI for the Pokemon detail screen, handling loading, error, and success states",
+          "parameters": [
+            "BuildContext",
+            "PokemonDetailViewModel",
+            "Widget?"
+          ],
+          "return_type": "Widget"
+        },
+        {
+          "name": "viewModelBuilder",
+          "description": "Creates the view model instance for managing Pokemon detail state and logic",
+          "parameters": [
+            "BuildContext"
+          ],
+          "return_type": "PokemonDetailViewModel"
+        },
+        {
+          "name": "onViewModelReady",
+          "description": "Initializes the view model with the specific Pokemon ID when the view is first created",
+          "parameters": [
+            "PokemonDetailViewModel"
+          ],
+          "return_type": null
+        }
+      ],
+      "dependencies": [
+        "flutter/material.dart",
+        "pokemon_deck/ui/common/app_colors.dart",
+        "pokemon_deck/ui/views/pokemon_detail/pokemon_detail_viewmodel.dart",
+        "stacked/stacked.dart"
+      ]
     }
   ],
   "dependencies": [
@@ -864,7 +1200,7 @@
       "purpose": "Creating gaps in layouts"
     }
   ],
-  "sequence_diagram": "@startuml\nactor User\nparticipant main\nparticipant AppView\nparticipant StartupView\nparticipant StartupViewModel\nparticipant HomeView\nparticipant HomeViewModel\n\nUser -> main: Launch app\nmain -> AppView: Create and run\nAppView -> StartupView: Initialize\nStartupView -> StartupViewModel: Run startup logic\nStartupViewModel -> HomeView: Navigate on completion\nHomeView -> HomeViewModel: Initialize\nUser -> HomeView: Interact\nHomeView -> HomeViewModel: Handle user actions\nHomeViewModel -> HomeView: Update UI\nHomeViewModel -> DialogService: Show dialog\nHomeViewModel -> BottomSheetService: Show bottom sheet\n@enduml",
-  "state_management_flow": "The application uses the Stacked architecture for state management. Each view has a corresponding ViewModel that handles the business logic and state for that view. The ViewModels are responsible for updating the UI, interacting with services (e.g., DialogService, BottomSheetService), and managing the application's overall state. The app.locator.dart file sets up the necessary dependency injections, allowing the ViewModels to access the required services.",
-  "navigation_flow": "The application's navigation is managed using the Stacked Router, defined in app.router.dart. The main entry point is the AppView, which initializes the Stacked architecture and displays the StartupView. After the startup logic is completed, the StartupViewModel navigates to the HomeView. The HomeView allows the user to interact with the application, triggering updates to the HomeViewModel, which in turn updates the UI and can show dialogs or bottom sheets as needed."
+  "sequence_diagram": "@startuml\nactor User\nparticipant PokemonService\nparticipant DeckView\nparticipant PokemonDetailView\nparticipant AddToDeckDialog\n\nUser -> DeckView: View Deck\nDeckView -> PokemonService: Retrieve Deck\nPokemonService --> DeckView: Return Pok\u00e9mon List\nUser -> DeckView: Select Pok\u00e9mon\nDeckView -> PokemonDetailView: Navigate\nPokemonDetailView -> PokemonService: Get Pok\u00e9mon Details\nUser -> PokemonDetailView: Add to Deck\nPokemonDetailView -> AddToDeckDialog: Confirm Add\nAddToDeckDialog -> PokemonService: Add Pok\u00e9mon\nPokemonService --> DeckView: Update Deck\n@enduml",
+  "state_management_flow": "State management is implemented using the Stacked framework's BaseViewModel. Each view (DeckView, PokemonDetailView) has a corresponding ViewModel that manages its state. The PokemonService acts as a centralized state container, tracking the global Pok\u00e9mon collection and deck state. ViewModels interact with the service to perform state mutations, with reactive rebuilding triggered by service method calls.",
+  "navigation_flow": "Navigation is managed through Stacked's routing system, defined in app.router.dart. The primary navigation flow starts with a StartupView, which initializes the app and transitions to the main DeckView. Users can navigate to PokemonDetailView by selecting a Pok\u00e9mon, with the ability to add Pok\u00e9mon to their deck via a modal dialog. The NavigationService handles all screen transitions, ensuring a clean and decoupled navigation experience."
 }
