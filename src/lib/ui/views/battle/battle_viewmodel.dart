@@ -20,10 +20,11 @@ class BattleViewModel extends BaseViewModel {
   Future<void> initialize() async {
     setBusy(true);
     try {
+      await _pokemonService.initializePokemon();
       await _pokemonService.initializeBattle();
       notifyListeners();
     } catch (e) {
-      setError('Failed to initialize battle. Please try again.');
+      setError(e.toString());
     } finally {
       setBusy(false);
     }
