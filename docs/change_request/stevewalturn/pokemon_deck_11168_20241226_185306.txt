@@ -1,0 +1,1 @@
+fix the now battle view still only white screen

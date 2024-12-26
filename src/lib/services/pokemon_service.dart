@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:pokemon_deck/models/pokemon.dart';
 import 'package:pokemon_deck/utils/const/pokemon_constants.dart';
 import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
 
 class PokemonService {
   final List<Pokemon> _pokemons = [];
@@ -18,6 +19,10 @@ class PokemonService {
   List<Pokemon> get opponentDeck => _opponentDeck;
 
   bool get isDeckFull => _deck.length >= PokemonConstants.maxDeckSize;
+
+  Future<void> init() async {
+    await initializePokemon();
+  }
 
   Future<void> initializePokemon() async {
     if (_pokemons.isEmpty) {
@@ -48,6 +53,14 @@ class PokemonService {
       throw Exception('Your deck is empty! Please add some Pokémon first.');
     }
     _opponentDeck = generateOpponentDeck();
+
+    // Reset health for all Pokémon at battle start
+    for (var pokemon in _deck) {
+      pokemon = pokemon.copyWith(currentHp: pokemon.hp);
+    }
+    for (var pokemon in _opponentDeck) {
+      pokemon = pokemon.copyWith(currentHp: pokemon.hp);
+    }
   }
 
   List<Pokemon> generateOpponentDeck() {
@@ -117,5 +130,8 @@ class PokemonService {
 
   void resetBattle() {
     _opponentDeck = [];
+    for (var pokemon in _deck) {
+      pokemon = pokemon.copyWith(currentHp: pokemon.hp);
+    }
   }
 }

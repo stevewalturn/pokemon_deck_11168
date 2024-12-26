@@ -20,10 +20,15 @@ class BattleViewModel extends BaseViewModel {
   Future<void> initialize() async {
     setBusy(true);
     try {
+      if (_pokemonService.deck.isEmpty) {
+        setError(
+            'Your deck is empty! Add some Pokémon before starting a battle.');
+        return;
+      }
       await _pokemonService.initializeBattle();
       notifyListeners();
     } catch (e) {
-      setError('Failed to initialize battle. Please try again.');
+      setError(e.toString());
     } finally {
       setBusy(false);
     }
@@ -51,6 +56,7 @@ class BattleViewModel extends BaseViewModel {
       _selectedPlayerPokemon != null && _selectedOpponentPokemon != null;
 
   void resetBattle() {
+    setBusy(true);
     _selectedPlayerPokemon = null;
     _selectedOpponentPokemon = null;
     _pokemonService.resetBattle();
@@ -61,5 +67,11 @@ class BattleViewModel extends BaseViewModel {
     _selectedPlayerPokemon = null;
     _selectedOpponentPokemon = null;
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _pokemonService.resetBattle();
+    super.dispose();
   }
 }

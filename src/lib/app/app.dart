@@ -19,10 +19,10 @@ import 'package:stacked_services/stacked_services.dart';
     MaterialRoute(page: BattleView),
   ],
   dependencies: [
+    InitializableSingleton(classType: PokemonService),
     LazySingleton(classType: NavigationService),
     LazySingleton(classType: DialogService),
     LazySingleton(classType: BottomSheetService),
-    LazySingleton(classType: PokemonService),
   ],
   bottomsheets: [
     StackedBottomsheet(classType: NoticeSheet),
