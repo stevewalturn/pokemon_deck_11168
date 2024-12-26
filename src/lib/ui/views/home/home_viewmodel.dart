@@ -18,6 +18,10 @@ class HomeViewModel extends BaseViewModel {
     _navigationService.navigateToDeckView();
   }
 
+  void navigateToBattle() {
+    _navigationService.navigateToBattleView();
+  }
+
   void navigateToPokemonDetail(String pokemonId) {
     _navigationService.navigateToPokemonDetailView(pokemonId: pokemonId);
   }
