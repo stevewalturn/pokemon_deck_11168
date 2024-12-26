@@ -21,6 +21,7 @@ class BattlePokemonCard extends StatelessWidget {
     return GestureDetector(
       onTap: pokemon.isDead ? null : onTap,
       child: Container(
+        width: 150,
         decoration: BoxDecoration(
           border: Border.all(
             color: isSelected ? Colors.yellow : Colors.transparent,
@@ -36,23 +37,24 @@ class BattlePokemonCard extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Stack(
                   children: [
                     Image.network(
                       pokemon.imageUrl,
-                      height: 80,
-                      width: 80,
+                      height: 60,
+                      width: 60,
                       fit: BoxFit.contain,
                       errorBuilder: (context, error, stackTrace) =>
-                          const Icon(Icons.error_outline, size: 80),
+                          const Icon(Icons.error_outline, size: 60),
                     ),
                     if (pokemon.isDead)
                       const Positioned.fill(
                         child: Icon(
                           Icons.close,
                           color: Colors.red,
-                          size: 60,
+                          size: 40,
                         ),
                       ),
                   ],
@@ -61,6 +63,7 @@ class BattlePokemonCard extends StatelessWidget {
                   pokemon.name,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
+                    fontSize: 12,
                   ),
                 ),
                 LinearProgressIndicator(
@@ -75,14 +78,40 @@ class BattlePokemonCard extends StatelessWidget {
                 Text(
                   'HP: ${pokemon.currentHp}/${pokemon.hp}',
                   style: TextStyle(
+                    fontSize: 10,
                     color: pokemon.isDead ? Colors.red : Colors.black,
                   ),
                 ),
+                const Divider(),
+                _buildStatRow('ATK', pokemon.attack),
+                _buildStatRow('DEF', pokemon.defense),
+                _buildStatRow('SPD', pokemon.speed),
+                _buildStatRow('SP.A', pokemon.specialAttack),
+                _buildStatRow('SP.D', pokemon.specialDefense),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildStatRow(String label, int value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(fontSize: 10),
+        ),
+        Text(
+          value.toString(),
+          style: const TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
     );
   }
 }

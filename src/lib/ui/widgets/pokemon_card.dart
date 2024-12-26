@@ -34,10 +34,10 @@ class PokemonCard extends StatelessWidget {
                   Center(
                     child: Image.network(
                       pokemon.imageUrl,
-                      height: 120,
-                      width: 120,
+                      height: 100,
+                      width: 100,
                       errorBuilder: (context, error, stackTrace) =>
-                          const Icon(Icons.error_outline, size: 120),
+                          const Icon(Icons.error_outline, size: 100),
                     ),
                   ),
                   if (showAddButton && !pokemon.inDeck)
@@ -65,22 +65,45 @@ class PokemonCard extends StatelessWidget {
               Text(
                 pokemon.name,
                 style: const TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Text(
-                'HP: ${pokemon.hp}',
-                style: const TextStyle(fontSize: 14),
-              ),
+              const Divider(),
+              _buildStatRow('HP', pokemon.hp),
+              _buildStatRow('Attack', pokemon.attack),
+              _buildStatRow('Defense', pokemon.defense),
+              _buildStatRow('Speed', pokemon.speed),
+              _buildStatRow('Sp.Atk', pokemon.specialAttack),
+              _buildStatRow('Sp.Def', pokemon.specialDefense),
+              const SizedBox(height: 4),
               Text(
                 'Type: ${pokemon.type}',
-                style: const TextStyle(fontSize: 14),
+                style: const TextStyle(fontSize: 12),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildStatRow(String label, int value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(fontSize: 12),
+        ),
+        Text(
+          value.toString(),
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
     );
   }
 }

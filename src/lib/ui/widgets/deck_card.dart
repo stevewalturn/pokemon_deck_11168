@@ -30,26 +30,30 @@ class DeckCard extends StatelessWidget {
                 Center(
                   child: Image.network(
                     pokemon.imageUrl,
-                    height: 100,
-                    width: 100,
+                    height: 80,
+                    width: 80,
                     errorBuilder: (context, error, stackTrace) =>
-                        const Icon(Icons.error_outline, size: 100),
+                        const Icon(Icons.error_outline, size: 80),
                   ),
                 ),
                 Text(
                   pokemon.name,
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Text(
-                  'HP: ${pokemon.hp}',
-                  style: const TextStyle(fontSize: 14),
-                ),
+                const Divider(),
+                _buildStatRow('HP', pokemon.hp),
+                _buildStatRow('ATK', pokemon.attack),
+                _buildStatRow('DEF', pokemon.defense),
+                _buildStatRow('SPD', pokemon.speed),
+                _buildStatRow('SP.A', pokemon.specialAttack),
+                _buildStatRow('SP.D', pokemon.specialDefense),
+                const SizedBox(height: 4),
                 Text(
                   'Type: ${pokemon.type}',
-                  style: const TextStyle(fontSize: 14),
+                  style: const TextStyle(fontSize: 12),
                 ),
               ],
             ),
@@ -65,6 +69,25 @@ class DeckCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildStatRow(String label, int value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(fontSize: 12),
+        ),
+        Text(
+          value.toString(),
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
     );
   }
 }

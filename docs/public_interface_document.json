@@ -1,7 +1,7 @@
 {
   "package_name": "com.yeah_well.pokemon_deck",
-  "project_description": "A Pok\u00e9mon management mobile application that enables users to explore, collect, and battle with a dynamically generated pool of 20 unique Pok\u00e9mon. Key features include browsing Pok\u00e9mon collections, viewing detailed Pok\u00e9mon statistics, building a personalized deck of up to 20 Pok\u00e9mon, and engaging in strategic battles by comparing Pok\u00e9mon attributes. Users can add/remove Pok\u00e9mon from their deck, navigate through different views, and interact with a comprehensive Pok\u00e9mon management system.",
-  "architecture_overview": "Implements a modular Stacked architecture with Model-View-ViewModel (MVVM) pattern, utilizing dependency injection and service locator. Core architectural components include a centralized PokemonService for managing Pok\u00e9mon data, dedicated ViewModels for each screen, and type-safe routing. The design emphasizes separation of concerns, reactive state management through BaseViewModel, and a comprehensive service-based approach to managing application state and interactions.",
+  "project_description": "A Pok\u00e9mon management mobile application that enables users to explore, collect, and battle with a dynamically generated pool of 20 unique Pok\u00e9mon. Users can browse a collection of randomly generated Pok\u00e9mon, view detailed statistics, build a personalized deck of up to 20 Pok\u00e9mon, organize their deck through sorting and filtering, and engage in strategic battles by comparing Pok\u00e9mon attributes. The app provides comprehensive interactions including adding/removing Pok\u00e9mon from the deck, navigating through different views, and comparing Pok\u00e9mon in a battle arena.",
+  "architecture_overview": "Implements a modular Stacked architecture with Model-View-ViewModel (MVVM) pattern, utilizing dependency injection and service locator. Core architectural components include a centralized PokemonService for managing Pok\u00e9mon data, dedicated ViewModels for each screen, type-safe routing via StackedRouter, and reactive state management through BaseViewModel. The design emphasizes separation of concerns, with services handling data management, ViewModels managing screen-specific logic, and Views rendering the UI.",
   "files": [
     {
       "name": "lib/app/app.dart",
@@ -1434,6 +1434,36 @@
         "pokemon_deck/ui/common/app_colors.dart",
         "pokemon_deck/utils/const/pokemon_constants.dart"
       ]
+    },
+    {
+      "name": "lib/ui/widgets/pokemon_stats_display.dart",
+      "description": "A Flutter widget responsible for displaying detailed Pokemon base statistics, rendering a visually appealing stats breakdown with color-coded progress bars that help users quickly understand a Pokemon's strengths and weaknesses.",
+      "class_diagram": "@startuml\nclass PokemonStatsDisplay {\n  -Pokemon pokemon\n  +Widget build(BuildContext context)\n  -Widget _buildStatBar(String label, int value, Color color)\n}\n@enduml",
+      "methods": [
+        {
+          "name": "build",
+          "description": "Constructs the visual representation of Pokemon base stats, creating a container with type-specific background color and a column of statistical progress bars",
+          "parameters": [
+            "BuildContext context"
+          ],
+          "return_type": "Widget"
+        },
+        {
+          "name": "_buildStatBar",
+          "description": "Generates an individual stat bar with label, numeric value, and a color-coded linear progress indicator representing the stat's relative strength",
+          "parameters": [
+            "String label",
+            "int value",
+            "Color color"
+          ],
+          "return_type": "Widget"
+        }
+      ],
+      "dependencies": [
+        "package:flutter/material.dart",
+        "package:pokemon_deck/models/pokemon.dart",
+        "package:pokemon_deck/ui/common/app_colors.dart"
+      ]
     }
   ],
   "dependencies": [
@@ -1458,7 +1488,7 @@
       "purpose": "Creating gaps in layouts"
     }
   ],
-  "sequence_diagram": "@startuml\nactor User\nparticipant StartupView\nparticipant HomeView\nparticipant DeckView\nparticipant PokemonDetailView\nparticipant BattleView\nparticipant PokemonService\n\nUser -> StartupView: Launch App\nStartupView -> PokemonService: Initialize Pok\u00e9mon\nPokemonService --> StartupView: Pok\u00e9mon Collection Ready\nStartupView -> HomeView: Navigate\nUser -> HomeView: Browse Options\nUser -> DeckView: View Deck\nDeckView -> PokemonService: Retrieve Deck\nUser -> DeckView: Select Pok\u00e9mon\nDeckView -> PokemonDetailView: Navigate\nPokemonDetailView -> PokemonService: Get Pok\u00e9mon Details\nUser -> PokemonDetailView: Add/Remove Pok\u00e9mon\nPokemonDetailView -> PokemonService: Update Deck\nUser -> HomeView: Start Battle\nHomeView -> BattleView: Navigate\nBattleView -> PokemonService: Load Player/Opponent Decks\n@enduml",
-  "state_management_flow": "State management is implemented using the Stacked framework's BaseViewModel and reactive programming paradigm. The PokemonService acts as a centralized state container, managing the global Pok\u00e9mon collection, deck state, and battle-related data. Each ViewModel (DeckViewModel, PokemonDetailViewModel, BattleViewModel) interacts with the PokemonService, triggering reactive UI updates through method calls that modify the underlying data. ViewModels encapsulate business logic, handle user interactions, and communicate with services to mutate and retrieve state.",
-  "navigation_flow": "Navigation is managed through Stacked's comprehensive routing system, defined in app.router.dart. The application follows a structured navigation flow starting with the StartupView, which initializes the app and transitions to the HomeView. Users can navigate between DeckView, PokemonDetailView, and BattleView using the NavigationService. Each view is associated with a specific ViewModel, enabling seamless screen transitions and maintaining a clean, decoupled navigation experience with type-safe routing and dynamic parameter passing."
+  "sequence_diagram": "@startuml\nactor User\nparticipant StartupView\nparticipant HomeView\nparticipant DeckView\nparticipant PokemonDetailView\nparticipant BattleView\nparticipant PokemonService\n\nUser -> StartupView: Launch App\nStartupView -> PokemonService: Initialize Pok\u00e9mon Collection\nPokemonService --> StartupView: Pok\u00e9mon Ready\nStartupView -> HomeView: Navigate\nUser -> HomeView: Browse Options\nUser -> DeckView: View Deck\nDeckView -> PokemonService: Retrieve Deck Data\nUser -> DeckView: Select Pok\u00e9mon\nDeckView -> PokemonDetailView: Navigate\nPokemonDetailView -> PokemonService: Get Pok\u00e9mon Details\nUser -> PokemonDetailView: Add/Remove from Deck\nPokemonDetailView -> PokemonService: Update Deck\nUser -> HomeView: Start Battle\nHomeView -> BattleView: Navigate\nBattleView -> PokemonService: Load Battle Decks\n@enduml",
+  "state_management_flow": "State management is implemented using the Stacked framework's BaseViewModel and reactive programming principles. The PokemonService acts as the centralized state container, managing the global Pok\u00e9mon collection, deck state, and battle-related data. Each ViewModel (DeckViewModel, PokemonDetailViewModel, BattleViewModel) interacts with the PokemonService, triggering reactive UI updates through method calls that modify the underlying data. The reactive approach ensures that UI components automatically update when the underlying data changes, providing a seamless and responsive user experience.",
+  "navigation_flow": "Navigation is managed through Stacked's comprehensive routing system defined in app.router.dart. The application follows a structured navigation flow starting with the StartupView for initialization, transitioning to the HomeView as the main entry point. Users can navigate between DeckView, PokemonDetailView, and BattleView using the NavigationService. Each view is associated with a specific ViewModel, enabling type-safe routing with dynamic parameter passing and maintaining a clean, decoupled navigation experience. The routing system supports push, replace, and pop navigation methods, ensuring flexible and intuitive screen transitions."
 }

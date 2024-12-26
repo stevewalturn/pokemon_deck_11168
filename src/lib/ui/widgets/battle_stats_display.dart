@@ -53,9 +53,35 @@ class BattleStatsDisplay extends StatelessWidget {
           const SizedBox(height: 4),
           Text('HP: ${pokemon.currentHp}/${pokemon.hp}'),
           const SizedBox(height: 4),
+          _buildStatRow('Attack', pokemon.attack),
+          _buildStatRow('Defense', pokemon.defense),
+          _buildStatRow('Speed', pokemon.speed),
+          _buildStatRow('Sp.Atk', pokemon.specialAttack),
+          _buildStatRow('Sp.Def', pokemon.specialDefense),
+          const SizedBox(height: 4),
           Text('Type: ${pokemon.type}'),
         ],
       ),
+    );
+  }
+
+  Widget _buildStatRow(String label, int value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          '$label:',
+          style: const TextStyle(fontSize: 12),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          value.toString(),
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
     );
   }
 }
