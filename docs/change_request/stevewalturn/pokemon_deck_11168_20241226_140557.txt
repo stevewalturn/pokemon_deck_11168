@@ -1,0 +1,1 @@
+null error, fix the null error on battle screen
