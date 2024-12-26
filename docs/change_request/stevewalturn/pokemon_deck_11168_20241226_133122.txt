@@ -1,0 +1,1 @@
+Right now i can only see white screen on battle view, fix it
