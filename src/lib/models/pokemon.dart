@@ -10,6 +10,11 @@ class Pokemon extends Equatable {
   final List<String> moves;
   final bool inDeck;
   final bool isActive;
+  final int attack;
+  final int defense;
+  final int speed;
+  final int specialAttack;
+  final int specialDefense;
 
   const Pokemon({
     required this.id,
@@ -21,6 +26,11 @@ class Pokemon extends Equatable {
     required this.moves,
     this.inDeck = false,
     this.isActive = false,
+    required this.attack,
+    required this.defense,
+    required this.speed,
+    required this.specialAttack,
+    required this.specialDefense,
   });
 
   Pokemon copyWith({
@@ -33,6 +43,11 @@ class Pokemon extends Equatable {
     List<String>? moves,
     bool? inDeck,
     bool? isActive,
+    int? attack,
+    int? defense,
+    int? speed,
+    int? specialAttack,
+    int? specialDefense,
   }) {
     return Pokemon(
       id: id ?? this.id,
@@ -44,6 +59,11 @@ class Pokemon extends Equatable {
       moves: moves ?? this.moves,
       inDeck: inDeck ?? this.inDeck,
       isActive: isActive ?? this.isActive,
+      attack: attack ?? this.attack,
+      defense: defense ?? this.defense,
+      speed: speed ?? this.speed,
+      specialAttack: specialAttack ?? this.specialAttack,
+      specialDefense: specialDefense ?? this.specialDefense,
     );
   }
 
@@ -61,5 +81,10 @@ class Pokemon extends Equatable {
         moves,
         inDeck,
         isActive,
+        attack,
+        defense,
+        speed,
+        specialAttack,
+        specialDefense,
       ];
 }

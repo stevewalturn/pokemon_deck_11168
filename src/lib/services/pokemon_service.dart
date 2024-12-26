@@ -42,6 +42,11 @@ class PokemonService {
               (index) => PokemonConstants.commonMoves[
                   _random.nextInt(PokemonConstants.commonMoves.length)],
             ),
+            attack: _random.nextInt(100) + 50,
+            defense: _random.nextInt(100) + 30,
+            speed: _random.nextInt(100) + 40,
+            specialAttack: _random.nextInt(100) + 60,
+            specialDefense: _random.nextInt(100) + 40,
           ),
         );
       }

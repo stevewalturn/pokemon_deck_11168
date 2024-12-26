@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pokemon_deck/ui/common/app_colors.dart';
 import 'package:pokemon_deck/ui/views/pokemon_detail/pokemon_detail_viewmodel.dart';
+import 'package:pokemon_deck/ui/widgets/pokemon_stats_display.dart';
 import 'package:stacked/stacked.dart';
 
 class PokemonDetailView extends StackedView<PokemonDetailViewModel> {
@@ -41,7 +42,7 @@ class PokemonDetailView extends StackedView<PokemonDetailViewModel> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           Container(
-                            height: 250,
+                            height: 200,
                             decoration: BoxDecoration(
                               color: pokemonTypeColors[viewModel.pokemon!.type]
                                   ?.withOpacity(0.2),
@@ -67,14 +68,12 @@ class PokemonDetailView extends StackedView<PokemonDetailViewModel> {
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
-                                  'HP: ${viewModel.pokemon!.hp}',
-                                  style: const TextStyle(fontSize: 18),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
                                   'Type: ${viewModel.pokemon!.type}',
                                   style: const TextStyle(fontSize: 18),
                                 ),
+                                const SizedBox(height: 16),
+                                PokemonStatsDisplay(
+                                    pokemon: viewModel.pokemon!),
                                 const SizedBox(height: 16),
                                 const Text(
                                   'Moves:',
@@ -85,11 +84,11 @@ class PokemonDetailView extends StackedView<PokemonDetailViewModel> {
                                 ),
                                 const SizedBox(height: 8),
                                 ...viewModel.pokemon!.moves.map(
-                                  (move) => Padding(
-                                    padding: const EdgeInsets.only(bottom: 4),
-                                    child: Text(
-                                      '• $move',
-                                      style: const TextStyle(fontSize: 16),
+                                  (move) => Card(
+                                    margin: const EdgeInsets.only(bottom: 8),
+                                    child: ListTile(
+                                      leading: const Icon(Icons.flash_on),
+                                      title: Text(move),
                                     ),
                                   ),
                                 ),
