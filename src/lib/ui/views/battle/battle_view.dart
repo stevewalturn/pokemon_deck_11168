@@ -12,6 +12,14 @@ class BattleView extends StackedView<BattleViewModel> {
     BattleViewModel viewModel,
     Widget? child,
   ) {
+    if (viewModel.isBusy) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Battle Arena'),
@@ -53,4 +61,7 @@ class BattleView extends StackedView<BattleViewModel> {
 
   @override
   BattleViewModel viewModelBuilder(BuildContext context) => BattleViewModel();
+
+  @override
+  void onViewModelReady(BattleViewModel viewModel) => viewModel.initialize();
 }
