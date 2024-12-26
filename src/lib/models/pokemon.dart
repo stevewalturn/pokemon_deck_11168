@@ -15,6 +15,7 @@ class Pokemon extends Equatable {
   final int speed;
   final int specialAttack;
   final int specialDefense;
+  final int level;
 
   const Pokemon({
     required this.id,
@@ -31,6 +32,7 @@ class Pokemon extends Equatable {
     required this.speed,
     required this.specialAttack,
     required this.specialDefense,
+    this.level = 1,
   });
 
   Pokemon copyWith({
@@ -48,6 +50,7 @@ class Pokemon extends Equatable {
     int? speed,
     int? specialAttack,
     int? specialDefense,
+    int? level,
   }) {
     return Pokemon(
       id: id ?? this.id,
@@ -64,6 +67,7 @@ class Pokemon extends Equatable {
       speed: speed ?? this.speed,
       specialAttack: specialAttack ?? this.specialAttack,
       specialDefense: specialDefense ?? this.specialDefense,
+      level: level ?? this.level,
     );
   }
 
@@ -86,5 +90,6 @@ class Pokemon extends Equatable {
         speed,
         specialAttack,
         specialDefense,
+        level,
       ];
 }

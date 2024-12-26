@@ -1,6 +1,6 @@
 {
   "package_name": "com.yeah_well.pokemon_deck",
-  "project_description": "A Pok\u00e9mon management mobile application that enables users to explore, collect, and battle with a dynamically generated pool of 20 unique Pok\u00e9mon. Users can browse a collection of randomly generated Pok\u00e9mon, view detailed statistics, build a personalized deck of up to 20 Pok\u00e9mon, organize their deck through sorting and filtering, and engage in strategic battles by comparing Pok\u00e9mon attributes. The app provides comprehensive interactions including adding/removing Pok\u00e9mon from the deck, navigating through different views, and comparing Pok\u00e9mon in a battle arena.",
+  "project_description": "A comprehensive Pok\u00e9mon management mobile application enabling users to explore, collect, and battle with dynamically generated Pok\u00e9mon. The app provides a complete ecosystem of Pok\u00e9mon interaction, including collection management, detailed statistics viewing, deck building with up to 20 unique Pok\u00e9mon, strategic battle mechanics, and comprehensive Pok\u00e9mon evolution tracking. Users can browse randomly generated Pok\u00e9mon, view detailed statistics, organize their deck through advanced sorting and filtering, and engage in strategic battles by comparing Pok\u00e9mon attributes.",
   "architecture_overview": "Implements a modular Stacked architecture with Model-View-ViewModel (MVVM) pattern, utilizing dependency injection and service locator. Core architectural components include a centralized PokemonService for managing Pok\u00e9mon data, dedicated ViewModels for each screen, type-safe routing via StackedRouter, and reactive state management through BaseViewModel. The design emphasizes separation of concerns, with services handling data management, ViewModels managing screen-specific logic, and Views rendering the UI.",
   "files": [
     {
@@ -1464,6 +1464,118 @@
         "package:pokemon_deck/models/pokemon.dart",
         "package:pokemon_deck/ui/common/app_colors.dart"
       ]
+    },
+    {
+      "name": "lib/ui/dialogs/evolution_details/evolution_dialog_model.dart",
+      "description": "A ViewModel for managing Pokemon evolution dialog data, responsible for tracking and initializing evolution details between two Pokemon species",
+      "class_diagram": "@startuml\nclass EvolutionDialogModel {\n  -fromPokemon: Pokemon\n  -toPokemon: Pokemon\n  -evolution: PokemonEvolution\n  +initialize(data: Map<String, dynamic>): void\n}\n@enduml",
+      "methods": [
+        {
+          "name": "initialize",
+          "description": "Sets up the evolution dialog with source and target Pokemon data",
+          "parameters": [
+            "data: Map<String, dynamic>"
+          ],
+          "return_type": null
+        }
+      ],
+      "dependencies": [
+        "pokemon_deck/models/pokemon.dart",
+        "pokemon_deck/models/pokemon_evolution.dart",
+        "stacked/stacked.dart"
+      ]
+    },
+    {
+      "name": "lib/models/pokemon_evolution.dart",
+      "description": "A model class representing the evolution details of a Pokemon, tracking the transformation from one Pokemon form to another with associated evolution requirements and completion status",
+      "class_diagram": "@startuml\nclass PokemonEvolution {\n  +fromPokemonId: String\n  +toPokemonId: String\n  +requiredLevel: int\n  +evolutionTrigger: String\n  +isComplete: bool\n  +copyWith(): PokemonEvolution\n}\n@enduml",
+      "methods": [
+        {
+          "name": "copyWith",
+          "description": "Creates a new PokemonEvolution instance with optional parameter overrides, enabling immutable state updates",
+          "parameters": [
+            "fromPokemonId",
+            "toPokemonId",
+            "requiredLevel",
+            "evolutionTrigger",
+            "isComplete"
+          ],
+          "return_type": "PokemonEvolution"
+        }
+      ],
+      "dependencies": [
+        "package:equatable/equatable.dart"
+      ]
+    },
+    {
+      "name": "lib/ui/widgets/evolution_chain_display.dart",
+      "description": "A Flutter widget that visualizes the evolution chain for a specific Pokemon, displaying evolution stages, requirements, and allowing interactive navigation between different evolution states.",
+      "class_diagram": "@startuml\nclass EvolutionChainDisplay {\n  - List<PokemonEvolution> evolutions\n  - Pokemon currentPokemon\n  - Function(PokemonEvolution) onEvolutionTap\n  + Widget build(BuildContext context)\n  - Widget _buildEvolutionStep(PokemonEvolution evolution)\n}\n@enduml",
+      "methods": [
+        {
+          "name": "build",
+          "description": "Constructs the visual representation of the Pokemon's evolution chain, handling cases of no evolutions and rendering individual evolution steps",
+          "parameters": [
+            "BuildContext context"
+          ],
+          "return_type": "Widget"
+        },
+        {
+          "name": "_buildEvolutionStep",
+          "description": "Creates an interactive widget for a single evolution stage, highlighting the current Pokemon and providing navigation callbacks",
+          "parameters": [
+            "PokemonEvolution evolution"
+          ],
+          "return_type": "Widget"
+        }
+      ],
+      "dependencies": [
+        "flutter/material.dart",
+        "pokemon_deck/models/pokemon.dart",
+        "pokemon_deck/models/pokemon_evolution.dart",
+        "pokemon_deck/ui/common/app_colors.dart"
+      ]
+    },
+    {
+      "name": "lib/ui/dialogs/evolution_details/evolution_dialog.dart",
+      "description": "A Flutter dialog component that displays detailed Pok\u00e9mon evolution information, showing the progression from a current Pok\u00e9mon to its evolved form with evolution requirements and visual representations",
+      "class_diagram": "@startuml\nclass EvolutionDialog {\n  +DialogRequest request\n  +Function(DialogResponse) completer\n  +Widget builder(BuildContext, EvolutionDialogModel, Widget?)\n  -Widget _buildPokemonInfo(Pokemon, String)\n  +EvolutionDialogModel viewModelBuilder(BuildContext)\n}\n@enduml",
+      "methods": [
+        {
+          "name": "builder",
+          "description": "Constructs the visual layout of the evolution dialog with Pok\u00e9mon details and evolution requirements",
+          "parameters": [
+            "BuildContext",
+            "EvolutionDialogModel",
+            "Widget?"
+          ],
+          "return_type": "Widget"
+        },
+        {
+          "name": "_buildPokemonInfo",
+          "description": "Renders individual Pok\u00e9mon information with image, name, level, and type-based styling",
+          "parameters": [
+            "Pokemon",
+            "String"
+          ],
+          "return_type": "Widget"
+        },
+        {
+          "name": "viewModelBuilder",
+          "description": "Creates and initializes the EvolutionDialogModel with evolution data",
+          "parameters": [
+            "BuildContext"
+          ],
+          "return_type": "EvolutionDialogModel"
+        }
+      ],
+      "dependencies": [
+        "package:flutter/material.dart",
+        "package:stacked/stacked.dart",
+        "package:stacked_services/stacked_services.dart",
+        "pokemon_deck/ui/common/app_colors.dart",
+        "pokemon_deck/ui/dialogs/evolution_details/evolution_dialog_model.dart"
+      ]
     }
   ],
   "dependencies": [
@@ -1488,7 +1600,7 @@
       "purpose": "Creating gaps in layouts"
     }
   ],
-  "sequence_diagram": "@startuml\nactor User\nparticipant StartupView\nparticipant HomeView\nparticipant DeckView\nparticipant PokemonDetailView\nparticipant BattleView\nparticipant PokemonService\n\nUser -> StartupView: Launch App\nStartupView -> PokemonService: Initialize Pok\u00e9mon Collection\nPokemonService --> StartupView: Pok\u00e9mon Ready\nStartupView -> HomeView: Navigate\nUser -> HomeView: Browse Options\nUser -> DeckView: View Deck\nDeckView -> PokemonService: Retrieve Deck Data\nUser -> DeckView: Select Pok\u00e9mon\nDeckView -> PokemonDetailView: Navigate\nPokemonDetailView -> PokemonService: Get Pok\u00e9mon Details\nUser -> PokemonDetailView: Add/Remove from Deck\nPokemonDetailView -> PokemonService: Update Deck\nUser -> HomeView: Start Battle\nHomeView -> BattleView: Navigate\nBattleView -> PokemonService: Load Battle Decks\n@enduml",
-  "state_management_flow": "State management is implemented using the Stacked framework's BaseViewModel and reactive programming principles. The PokemonService acts as the centralized state container, managing the global Pok\u00e9mon collection, deck state, and battle-related data. Each ViewModel (DeckViewModel, PokemonDetailViewModel, BattleViewModel) interacts with the PokemonService, triggering reactive UI updates through method calls that modify the underlying data. The reactive approach ensures that UI components automatically update when the underlying data changes, providing a seamless and responsive user experience.",
-  "navigation_flow": "Navigation is managed through Stacked's comprehensive routing system defined in app.router.dart. The application follows a structured navigation flow starting with the StartupView for initialization, transitioning to the HomeView as the main entry point. Users can navigate between DeckView, PokemonDetailView, and BattleView using the NavigationService. Each view is associated with a specific ViewModel, enabling type-safe routing with dynamic parameter passing and maintaining a clean, decoupled navigation experience. The routing system supports push, replace, and pop navigation methods, ensuring flexible and intuitive screen transitions."
+  "sequence_diagram": "@startuml\nactor User\nparticipant StartupView\nparticipant HomeView\nparticipant DeckView\nparticipant PokemonDetailView\nparticipant BattleView\nparticipant PokemonService\n\nUser -> StartupView: Launch App\nStartupView -> PokemonService: Initialize Pok\u00e9mon\nPokemonService --> StartupView: Collection Ready\nStartupView -> HomeView: Navigate\nUser -> DeckView: Manage Deck\nDeckView -> PokemonService: Retrieve/Modify Deck\nUser -> PokemonDetailView: View Details\nPokemonDetailView -> PokemonService: Get Pok\u00e9mon Info\nUser -> BattleView: Start Battle\nBattleView -> PokemonService: Load Battle Decks\n@enduml",
+  "state_management_flow": "Utilizes Stacked framework's reactive state management with PokemonService as the central state container. ViewModels (DeckViewModel, PokemonDetailViewModel, BattleViewModel) interact with PokemonService, triggering reactive UI updates. Each ViewModel extends BaseViewModel, enabling automatic UI rebuilds when underlying data changes. The reactive approach ensures real-time synchronization between data models and user interface, providing a responsive and dynamic user experience.",
+  "navigation_flow": "Implements type-safe routing using Stacked's StackedRouter with predefined routes in app.router.dart. Navigation follows a structured flow from StartupView to HomeView, with seamless transitions between DeckView, PokemonDetailView, and BattleView. Utilizes NavigationService for push, replace, and pop navigation methods, supporting dynamic parameter passing and maintaining a clean, decoupled navigation architecture. Routes are annotation-driven, allowing easy addition and management of new screen transitions."
 }

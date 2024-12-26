@@ -1,6 +1,7 @@
 import 'package:pokemon_deck/services/pokemon_service.dart';
 import 'package:pokemon_deck/ui/bottom_sheets/notice/notice_sheet.dart';
 import 'package:pokemon_deck/ui/dialogs/add_to_deck/add_to_deck_dialog.dart';
+import 'package:pokemon_deck/ui/dialogs/evolution_details/evolution_dialog.dart';
 import 'package:pokemon_deck/ui/dialogs/info_alert/info_alert_dialog.dart';
 import 'package:pokemon_deck/ui/views/battle/battle_view.dart';
 import 'package:pokemon_deck/ui/views/deck/deck_view.dart';
@@ -30,6 +31,7 @@ import 'package:stacked_services/stacked_services.dart';
   dialogs: [
     StackedDialog(classType: InfoAlertDialog),
     StackedDialog(classType: AddToDeckDialog),
+    StackedDialog(classType: EvolutionDialog),
   ],
 )
 class App {}
