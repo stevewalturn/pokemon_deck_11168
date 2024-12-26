@@ -31,7 +31,8 @@ class BattlePokemonCard extends StatelessWidget {
         child: Card(
           color: pokemon.isDead
               ? Colors.grey.withOpacity(0.5)
-              : pokemonTypeColors[pokemon.type]?.withOpacity(0.2),
+              : (pokemonTypeColors[pokemon.type] ?? Colors.grey)
+                  .withOpacity(0.2),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(

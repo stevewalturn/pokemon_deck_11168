@@ -9,8 +9,7 @@ class BattleViewModel extends BaseViewModel {
   final _navigationService = locator<NavigationService>();
 
   List<Pokemon> get playerDeck => _pokemonService.deck;
-  List<Pokemon> _opponentDeck = [];
-  List<Pokemon> get opponentDeck => _opponentDeck;
+  List<Pokemon> get opponentDeck => _pokemonService.opponentDeck;
 
   Pokemon? _selectedPlayerPokemon;
   Pokemon? _selectedOpponentPokemon;
@@ -21,7 +20,7 @@ class BattleViewModel extends BaseViewModel {
   Future<void> initialize() async {
     setBusy(true);
     try {
-      _opponentDeck = _pokemonService.generateOpponentDeck();
+      await _pokemonService.initializeBattle();
       notifyListeners();
     } catch (e) {
       setError('Failed to initialize battle. Please try again.');
@@ -54,7 +53,13 @@ class BattleViewModel extends BaseViewModel {
   void resetBattle() {
     _selectedPlayerPokemon = null;
     _selectedOpponentPokemon = null;
-    _opponentDeck = _pokemonService.generateOpponentDeck();
+    _pokemonService.resetBattle();
+    initialize();
+  }
+
+  void clearSelections() {
+    _selectedPlayerPokemon = null;
+    _selectedOpponentPokemon = null;
     notifyListeners();
   }
 }

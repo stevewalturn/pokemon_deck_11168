@@ -23,28 +23,38 @@ class BattleArena extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (playerDeck.isEmpty) {
+      return const Center(
+        child: Text(
+          'Add Pokémon to your deck to start battling!',
+          style: TextStyle(fontSize: 16),
+        ),
+      );
+    }
+
     return Column(
       children: [
         // Opponent's deck
-        SizedBox(
-          height: 150,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: opponentDeck.length,
-            itemBuilder: (context, index) {
-              final pokemon = opponentDeck[index];
-              return Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: BattlePokemonCard(
-                  pokemon: pokemon,
-                  isSelected: selectedOpponentPokemon?.id == pokemon.id,
-                  onTap: () => onOpponentPokemonSelected(pokemon),
-                  isOpponent: true,
-                ),
-              );
-            },
+        if (opponentDeck.isNotEmpty)
+          SizedBox(
+            height: 150,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: opponentDeck.length,
+              itemBuilder: (context, index) {
+                final pokemon = opponentDeck[index];
+                return Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: BattlePokemonCard(
+                    pokemon: pokemon,
+                    isSelected: selectedOpponentPokemon?.id == pokemon.id,
+                    onTap: () => onOpponentPokemonSelected(pokemon),
+                    isOpponent: true,
+                  ),
+                );
+              },
+            ),
           ),
-        ),
 
         // Battle stats display
         if (selectedPlayerPokemon != null && selectedOpponentPokemon != null)

@@ -6,7 +6,7 @@ import 'package:stacked/stacked.dart';
 class PokemonService {
   final List<Pokemon> _pokemons = [];
   final List<Pokemon> _deck = [];
-  final List<Pokemon> _opponentDeck = [];
+  List<Pokemon> _opponentDeck = [];
   final _random = Random();
 
   List<Pokemon> get pokemons => _pokemons;
@@ -15,6 +15,7 @@ class PokemonService {
             currentHp: p.hp,
           ))
       .toList();
+  List<Pokemon> get opponentDeck => _opponentDeck;
 
   bool get isDeckFull => _deck.length >= PokemonConstants.maxDeckSize;
 
@@ -42,26 +43,35 @@ class PokemonService {
     }
   }
 
+  Future<void> initializeBattle() async {
+    if (_deck.isEmpty) {
+      throw Exception('Your deck is empty! Please add some Pokémon first.');
+    }
+    _opponentDeck = generateOpponentDeck();
+  }
+
   List<Pokemon> generateOpponentDeck() {
-    if (_opponentDeck.isEmpty) {
-      final availablePokemon = _pokemons
-          .where((p) => !_deck.any((deckPokemon) => deckPokemon.id == p.id))
-          .toList();
+    final availablePokemon = _pokemons
+        .where((p) => !_deck.any((deckPokemon) => deckPokemon.id == p.id))
+        .toList();
 
-      final deckSize =
-          min(PokemonConstants.maxDeckSize, availablePokemon.length);
-
-      for (var i = 0; i < deckSize; i++) {
-        final randomIndex = _random.nextInt(availablePokemon.length);
-        final selectedPokemon = availablePokemon[randomIndex];
-        _opponentDeck.add(selectedPokemon.copyWith(
-          currentHp: selectedPokemon.hp,
-        ));
-        availablePokemon.removeAt(randomIndex);
-      }
+    if (availablePokemon.isEmpty) {
+      throw Exception('No Pokémon available for opponent deck!');
     }
 
-    return _opponentDeck;
+    final deckSize = min(PokemonConstants.maxDeckSize, availablePokemon.length);
+    final newOpponentDeck = <Pokemon>[];
+
+    for (var i = 0; i < deckSize; i++) {
+      final randomIndex = _random.nextInt(availablePokemon.length);
+      final selectedPokemon = availablePokemon[randomIndex];
+      newOpponentDeck.add(selectedPokemon.copyWith(
+        currentHp: selectedPokemon.hp,
+      ));
+      availablePokemon.removeAt(randomIndex);
+    }
+
+    return newOpponentDeck;
   }
 
   Pokemon? getPokemon(String id) {
@@ -75,16 +85,16 @@ class PokemonService {
   bool addToDeck(String pokemonId) {
     if (isDeckFull) {
       throw Exception(
-          'Your deck is full! Remove a Pokemon before adding a new one.');
+          'Your deck is full! Remove a Pokémon before adding a new one.');
     }
 
     final pokemon = getPokemon(pokemonId);
     if (pokemon == null) {
-      throw Exception('Pokemon not found!');
+      throw Exception('Pokémon not found!');
     }
 
     if (_deck.any((p) => p.id == pokemonId)) {
-      throw Exception('This Pokemon is already in your deck!');
+      throw Exception('This Pokémon is already in your deck!');
     }
 
     _deck.add(pokemon.copyWith(inDeck: true));
@@ -94,7 +104,7 @@ class PokemonService {
   bool removeFromDeck(String pokemonId) {
     final index = _deck.indexWhere((pokemon) => pokemon.id == pokemonId);
     if (index == -1) {
-      throw Exception('Pokemon not found in deck!');
+      throw Exception('Pokémon not found in deck!');
     }
 
     _deck.removeAt(index);
@@ -106,6 +116,6 @@ class PokemonService {
   }
 
   void resetBattle() {
-    _opponentDeck.clear();
+    _opponentDeck = [];
   }
 }
