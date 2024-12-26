@@ -12,14 +12,6 @@ class BattleView extends StackedView<BattleViewModel> {
     BattleViewModel viewModel,
     Widget? child,
   ) {
-    if (viewModel.isBusy) {
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Battle Arena'),
@@ -30,43 +22,68 @@ class BattleView extends StackedView<BattleViewModel> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          if (viewModel.modelError != null)
-            Container(
-              padding: const EdgeInsets.all(8),
-              color: Colors.red.withOpacity(0.2),
-              child: Text(
-                viewModel.modelError.toString(),
-                style: const TextStyle(color: Colors.red),
-              ),
-            ),
-          if (viewModel.playerDeck.isEmpty)
-            const Expanded(
-              child: Center(
-                child: Text(
-                  'Your deck is empty! Add some Pokémon before starting a battle.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16),
-                ),
-              ),
+      body: viewModel.isBusy
+          ? const Center(
+              child: CircularProgressIndicator(),
             )
-          else
-            Expanded(
+          : SafeArea(
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: BattleArena(
-                  playerDeck: viewModel.playerDeck,
-                  opponentDeck: viewModel.opponentDeck,
-                  selectedPlayerPokemon: viewModel.selectedPlayerPokemon,
-                  selectedOpponentPokemon: viewModel.selectedOpponentPokemon,
-                  onPlayerPokemonSelected: viewModel.selectPlayerPokemon,
-                  onOpponentPokemonSelected: viewModel.selectOpponentPokemon,
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  children: [
+                    if (viewModel.modelError != null)
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        margin: const EdgeInsets.only(bottom: 16),
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.red.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          viewModel.modelError.toString(),
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    if (viewModel.playerDeck.isEmpty)
+                      const Expanded(
+                        child: Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Text(
+                              'Your deck is empty! Add some Pokémon before starting a battle.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    else
+                      Expanded(
+                        child: BattleArena(
+                          playerDeck: viewModel.playerDeck,
+                          opponentDeck: viewModel.opponentDeck,
+                          selectedPlayerPokemon:
+                              viewModel.selectedPlayerPokemon,
+                          selectedOpponentPokemon:
+                              viewModel.selectedOpponentPokemon,
+                          onPlayerPokemonSelected:
+                              viewModel.selectPlayerPokemon,
+                          onOpponentPokemonSelected:
+                              viewModel.selectOpponentPokemon,
+                        ),
+                      ),
+                  ],
                 ),
               ),
             ),
-        ],
-      ),
     );
   }
 
