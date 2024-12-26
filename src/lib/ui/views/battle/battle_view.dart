@@ -41,19 +41,30 @@ class BattleView extends StackedView<BattleViewModel> {
                 style: const TextStyle(color: Colors.red),
               ),
             ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: BattleArena(
-                playerDeck: viewModel.playerDeck,
-                opponentDeck: viewModel.opponentDeck,
-                selectedPlayerPokemon: viewModel.selectedPlayerPokemon,
-                selectedOpponentPokemon: viewModel.selectedOpponentPokemon,
-                onPlayerPokemonSelected: viewModel.selectPlayerPokemon,
-                onOpponentPokemonSelected: viewModel.selectOpponentPokemon,
+          if (viewModel.playerDeck.isEmpty)
+            const Expanded(
+              child: Center(
+                child: Text(
+                  'Your deck is empty! Add some Pokémon before starting a battle.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16),
+                ),
+              ),
+            )
+          else
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: BattleArena(
+                  playerDeck: viewModel.playerDeck,
+                  opponentDeck: viewModel.opponentDeck,
+                  selectedPlayerPokemon: viewModel.selectedPlayerPokemon,
+                  selectedOpponentPokemon: viewModel.selectedOpponentPokemon,
+                  onPlayerPokemonSelected: viewModel.selectPlayerPokemon,
+                  onOpponentPokemonSelected: viewModel.selectOpponentPokemon,
+                ),
               ),
             ),
-          ),
         ],
       ),
     );
