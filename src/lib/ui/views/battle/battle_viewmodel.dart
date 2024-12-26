@@ -2,18 +2,33 @@ import 'package:pokemon_deck/app/app.locator.dart';
 import 'package:pokemon_deck/models/pokemon.dart';
 import 'package:pokemon_deck/services/pokemon_service.dart';
 import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
 
 class BattleViewModel extends BaseViewModel {
   final _pokemonService = locator<PokemonService>();
+  final _navigationService = locator<NavigationService>();
 
   List<Pokemon> get playerDeck => _pokemonService.deck;
-  List<Pokemon> get opponentDeck => _pokemonService.generateOpponentDeck();
+  List<Pokemon> _opponentDeck = [];
+  List<Pokemon> get opponentDeck => _opponentDeck;
 
   Pokemon? _selectedPlayerPokemon;
   Pokemon? _selectedOpponentPokemon;
 
   Pokemon? get selectedPlayerPokemon => _selectedPlayerPokemon;
   Pokemon? get selectedOpponentPokemon => _selectedOpponentPokemon;
+
+  Future<void> initialize() async {
+    setBusy(true);
+    try {
+      _opponentDeck = _pokemonService.generateOpponentDeck();
+      notifyListeners();
+    } catch (e) {
+      setError('Failed to initialize battle. Please try again.');
+    } finally {
+      setBusy(false);
+    }
+  }
 
   void selectPlayerPokemon(Pokemon pokemon) {
     if (pokemon.isDead) {
@@ -39,6 +54,7 @@ class BattleViewModel extends BaseViewModel {
   void resetBattle() {
     _selectedPlayerPokemon = null;
     _selectedOpponentPokemon = null;
+    _opponentDeck = _pokemonService.generateOpponentDeck();
     notifyListeners();
   }
 }
