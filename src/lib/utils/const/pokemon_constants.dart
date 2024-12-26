@@ -56,4 +56,14 @@ class PokemonConstants {
     'Growl',
     'Roar',
   ];
+
+  static const List<String> evolutionTriggers = [
+    'Level Up',
+    'Trade',
+    'Stone',
+    'Friendship',
+  ];
+
+  static const int baseEvolutionLevel = 16;
+  static const int secondEvolutionLevel = 36;
 }

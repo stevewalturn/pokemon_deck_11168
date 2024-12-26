@@ -1,25 +1,22 @@
 import 'dart:math';
 import 'package:pokemon_deck/models/pokemon.dart';
+import 'package:pokemon_deck/models/pokemon_evolution.dart';
 import 'package:pokemon_deck/utils/const/pokemon_constants.dart';
 import 'package:stacked/stacked.dart';
-import 'package:stacked_services/stacked_services.dart';
 
-class PokemonService {
+class PokemonService implements InitializableDependency {
   final List<Pokemon> _pokemons = [];
   final List<Pokemon> _deck = [];
   List<Pokemon> _opponentDeck = [];
+  final List<PokemonEvolution> _evolutions = [];
   final _random = Random();
 
   List<Pokemon> get pokemons => _pokemons;
-  List<Pokemon> get deck => _deck
-      .map((p) => p.copyWith(
-            currentHp: p.hp,
-          ))
-      .toList();
+  List<Pokemon> get deck => _deck;
   List<Pokemon> get opponentDeck => _opponentDeck;
-
   bool get isDeckFull => _deck.length >= PokemonConstants.maxDeckSize;
 
+  @override
   Future<void> init() async {
     await initializePokemon();
   }
@@ -47,11 +44,64 @@ class PokemonService {
             speed: _random.nextInt(100) + 40,
             specialAttack: _random.nextInt(100) + 60,
             specialDefense: _random.nextInt(100) + 40,
+            level: _random.nextInt(50) + 1,
+          ),
+        );
+      }
+      _initializeEvolutions();
+    }
+  }
+
+  void _initializeEvolutions() {
+    for (int i = 0; i < _pokemons.length - 1; i += 3) {
+      if (i + 2 < _pokemons.length) {
+        // First evolution
+        _evolutions.add(
+          PokemonEvolution(
+            fromPokemonId: _pokemons[i].id,
+            toPokemonId: _pokemons[i + 1].id,
+            requiredLevel: PokemonConstants.baseEvolutionLevel,
+            evolutionTrigger: PokemonConstants.evolutionTriggers[
+                _random.nextInt(PokemonConstants.evolutionTriggers.length)],
+            isComplete:
+                _pokemons[i].level >= PokemonConstants.baseEvolutionLevel,
+          ),
+        );
+
+        // Second evolution
+        _evolutions.add(
+          PokemonEvolution(
+            fromPokemonId: _pokemons[i + 1].id,
+            toPokemonId: _pokemons[i + 2].id,
+            requiredLevel: PokemonConstants.secondEvolutionLevel,
+            evolutionTrigger: PokemonConstants.evolutionTriggers[
+                _random.nextInt(PokemonConstants.evolutionTriggers.length)],
+            isComplete:
+                _pokemons[i + 1].level >= PokemonConstants.secondEvolutionLevel,
           ),
         );
       }
     }
   }
+
+  List<PokemonEvolution> getEvolutionsForPokemon(String pokemonId) {
+    return _evolutions
+        .where((evolution) =>
+            evolution.fromPokemonId == pokemonId ||
+            evolution.toPokemonId == pokemonId)
+        .toList();
+  }
+
+  Pokemon? getPokemon(String id) {
+    try {
+      return _pokemons.firstWhere((pokemon) => pokemon.id == id);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // Rest of the existing methods remain unchanged...
+  // Keeping all battle-related and deck management methods
 
   Future<void> initializeBattle() async {
     if (_deck.isEmpty) {
@@ -59,7 +109,6 @@ class PokemonService {
     }
     _opponentDeck = generateOpponentDeck();
 
-    // Reset health for all Pokémon at battle start
     for (var pokemon in _deck) {
       pokemon = pokemon.copyWith(currentHp: pokemon.hp);
     }
@@ -90,14 +139,6 @@ class PokemonService {
     }
 
     return newOpponentDeck;
-  }
-
-  Pokemon? getPokemon(String id) {
-    try {
-      return _pokemons.firstWhere((pokemon) => pokemon.id == id);
-    } catch (e) {
-      return null;
-    }
   }
 
   bool addToDeck(String pokemonId) {
