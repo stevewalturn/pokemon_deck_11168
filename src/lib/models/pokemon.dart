@@ -15,6 +15,10 @@ class Pokemon extends Equatable {
   final int speed;
   final int specialAttack;
   final int specialDefense;
+  final String? evolvesFromId;
+  final String? evolvesToId;
+  final int evolutionStage;
+  final int level;
 
   const Pokemon({
     required this.id,
@@ -31,6 +35,10 @@ class Pokemon extends Equatable {
     required this.speed,
     required this.specialAttack,
     required this.specialDefense,
+    this.evolvesFromId,
+    this.evolvesToId,
+    this.evolutionStage = 1,
+    this.level = 1,
   });
 
   Pokemon copyWith({
@@ -48,6 +56,10 @@ class Pokemon extends Equatable {
     int? speed,
     int? specialAttack,
     int? specialDefense,
+    String? evolvesFromId,
+    String? evolvesToId,
+    int? evolutionStage,
+    int? level,
   }) {
     return Pokemon(
       id: id ?? this.id,
@@ -64,11 +76,16 @@ class Pokemon extends Equatable {
       speed: speed ?? this.speed,
       specialAttack: specialAttack ?? this.specialAttack,
       specialDefense: specialDefense ?? this.specialDefense,
+      evolvesFromId: evolvesFromId ?? this.evolvesFromId,
+      evolvesToId: evolvesToId ?? this.evolvesToId,
+      evolutionStage: evolutionStage ?? this.evolutionStage,
+      level: level ?? this.level,
     );
   }
 
   double get healthPercentage => currentHp / hp;
   bool get isDead => currentHp <= 0;
+  bool get canEvolve => evolvesToId != null && level >= evolutionStage * 20;
 
   @override
   List<Object?> get props => [
@@ -86,5 +103,9 @@ class Pokemon extends Equatable {
         speed,
         specialAttack,
         specialDefense,
+        evolvesFromId,
+        evolvesToId,
+        evolutionStage,
+        level,
       ];
 }
